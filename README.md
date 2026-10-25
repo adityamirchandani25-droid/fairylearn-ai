@@ -34,6 +34,27 @@ The floating **AI guide** works on the path and inside lessons. `/api/guide` che
 
 The Node server binds to loopback for local development. For a public host, set `HOST=0.0.0.0` and use the host-assigned `PORT`. Deployment needs the Node server as well as `public/`, since the server provides configuration and secure personalization. Submit the public site's home URL, not a GitHub repository URL; judges must be able to open the home page and lessons without logging in.
 
+## Deploy to Vercel
+
+Import the repository with the project root set to this directory. The checked-in
+`vercel.json` selects the **Other** framework preset, skips the build command, and
+serves `public/` directly. Remove conflicting dashboard build/output overrides.
+`api/index.mjs` exports the existing request handler as a Vercel Node function;
+all `/api/*` requests are rewritten to it, and `/logo.png` maps to the public logo.
+The function has a 60-second duration to accommodate the AI request timeout.
+
+In Vercel Project Settings → Environment Variables, add `SUPABASE_URL`,
+`SUPABASE_ANON_KEY`, `OPENAI_API_KEY`, optional `OPENAI_MODEL`, and `TRUST_PROXY=1`.
+Local `.env` files are not deployment configuration. Redeploy after changing these
+values. Set Supabase's Site URL and allowed auth redirect URLs to the deployed origin.
+No `HOST` setting or `npm start` command is needed on Vercel.
+
+After deployment, check `/`, `/logo.png`, and `/api/config`. If Vercel reports a
+function failure, inspect that deployment's Runtime Logs for the exception.
+Missing service keys should disable the corresponding features rather than crash
+the homepage. In-memory lesson caches and rate limits apply per function instance
+and reset on cold starts; they are not shared across Vercel instances.
+
 ## Quizzes
 
 Every lesson ends with a Khan Academy–style quiz (`public/quiz.mjs`). Questions appear one at a time with shuffled choices. Learners choose an answer and press **Check**. A wrong answer is crossed out, and they try again or ask for a hint. A correct answer shows why it is right. Only answers that are right on the first try without a hint count toward the score. Passing needs 80% (4 of 5), and the results screen offers a retake. The course hub also has a ten-question **unit test** that samples all three public topics. Best scores are kept in browser storage.
