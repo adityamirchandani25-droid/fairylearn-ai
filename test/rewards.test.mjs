@@ -1,13 +1,22 @@
+// Tests for public/rewards.mjs (trophies and the item shop).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { restoreWallet, awardCompletion, awardQuiz, trophyBalance, earnedTrophies, buyItem, consumeItem, toggleItem, itemCount, quizTrophyTier, MAX_TROPHIES, shopItems } from '../public/rewards.mjs';
 import { createQuiz, selectChoice, checkAnswer, showHint, protectRetry, nextQuestion, quizScore } from '../public/quiz.mjs';
+// Helpers:
+//   fresh()     — an empty wallet;
+//   id(n)       — a valid AI lesson id numbered n;
+//   funded()    — a wallet that completed and aced 80 lessons, so it has plenty of trophies
+//                 (and reaches the 400 lifetime cap);
+//   item        — a simple three-choice quiz question;
+//   fixedQuiz() — three copies of it with choices kept in their written order.
 const fresh = () => restoreWallet(null);
 const id = n => `ai:00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const funded = () => Array.from({ length: 80 }, (_, n) => id(n)).reduce((wallet, key) => awardQuiz(awardCompletion(wallet, key).wallet, key, 5, 5).wallet, fresh());
 const item = { question: 'What makes a useful prompt?', choices: ['Clear context', 'No context', 'Private data'], answer: 0, hint: 'Think about what the tool needs.', explanation: 'Context explains the task.' };
 const fixedQuiz = () => createQuiz([item, item, item], () => 0.999);
 
+// Exactly 80% earns 3, exactly 95% earns 5 in total, and improving later only adds the difference.
 test('quiz rewards use exact 80% and 95% boundaries, and 95% pays five total', () => {
   for (const [score, total, tier] of [[79,100,0],[80,100,3],[94,100,3],[95,100,5],[19,20,5],[4,5,3],[5,5,5],[3,4,0]]) assert.equal(quizTrophyTier(score,total),tier);
   assert.equal(quizTrophyTier(Infinity,5),0);
@@ -19,6 +28,7 @@ test('quiz rewards use exact 80% and 95% boundaries, and 95% pays five total', (
   assert.equal(earnedTrophies(reward.wallet),5);
   assert.equal(awardQuiz(reward.wallet,'foundations',5,5).earned,0);
 });
+// Completing a lesson pays its own +1, while finishing a standalone quiz does not mark a lesson done.
 test('a lesson earns one separate trophy, while standalone quizzes do not complete lessons', () => {
   let wallet = awardQuiz(fresh(),'foundations',5,5).wallet;
   assert.equal(trophyBalance(wallet),5);
@@ -30,6 +40,7 @@ test('a lesson earns one separate trophy, while standalone quizzes do not comple
   assert.equal(awardQuiz(wallet,'unit-test',8,10).earned,3);
   assert.equal(awardQuiz(wallet,'not-real',5,5).earned,0);
 });
+// The 400-trophy lifetime cap holds even after spending trophies.
 test('400 is a lifetime cap that spending cannot refill', () => {
   let wallet = funded();
   assert.equal(earnedTrophies(wallet),MAX_TROPHIES);
@@ -42,6 +53,7 @@ test('400 is a lifetime cap that spending cannot refill', () => {
   assert.equal(Math.max(...shopItems.map(item=>item.cost)),200);
   assert.ok(shopItems.length >= 12);
 });
+// Purchases and used items survive saving and loading, and can never make funds or stock negative.
 test('purchases and consumptions persist and cannot create negative funds or stock', () => {
   let wallet = awardQuiz(fresh(),'foundations',5,5).wallet;
   assert.match(buyItem(fresh(),'hint-pass').error,/5 more/);
@@ -56,6 +68,7 @@ test('purchases and consumptions persist and cannot create negative funds or sto
   assert.equal(trophyBalance(restored),0);
   assert.equal(itemCount(restored,'hint-pass'),0);
 });
+// Permanent perks can only be bought once, and equipping one style turns off its rivals.
 test('permanent items cannot be bought twice and conflicting styles equip exclusively', () => {
   let wallet = buyItem(funded(),'focus-lens').wallet;
   const balance = trophyBalance(wallet);
@@ -69,6 +82,7 @@ test('permanent items cannot be bought twice and conflicting styles equip exclus
   assert.equal(wallet.equipped['sage-theme'],true);
   assert.equal(wallet.equipped['ocean-theme'],false);
 });
+// Old (version 1) wallets are migrated: rewards are recalculated and owned perks are kept as gifts.
 test('migration recalculates old trophy awards and retains previously purchased perks', () => {
   const wallet = restoreWallet({ claims:['foundations:complete','foundations:perfect'], purchases:{'hint-pass':2,'focus-lens':1},used:{'hint-pass':1},equipped:{'focus-lens':true} });
   assert.equal(earnedTrophies(wallet),6);
@@ -77,12 +91,14 @@ test('migration recalculates old trophy awards and retains previously purchased 
   assert.equal(wallet.equipped['focus-lens'],true);
   assert.deepEqual(restoreWallet(wallet),wallet);
 });
+// An edited save cannot spend more than was earned or invent reward sources.
 test('invalid current saves cannot overspend or invent reward sources', () => {
   const wallet = restoreWallet({version:2,claims:['foundations:complete','foundations:complete','fake'],purchases:{'hint-pass':900},used:{'hint-pass':-1}});
   assert.equal(earnedTrophies(wallet),1);
   assert.equal(trophyBalance(wallet),1);
   assert.equal(itemCount(wallet,'hint-pass'),0);
 });
+// Hint Pass and Retry Charm only protect the question they were used on.
 test('Hint Pass and Retry Charm protect only the current question', () => {
   let quiz = checkAnswer(selectChoice(showHint(fixedQuiz(),true),0));
   assert.equal(quizScore(quiz),1);

@@ -1,12 +1,17 @@
 <!doctype html>
+<!-- index.html is the only page of the app. It is nearly empty on purpose: public/app.mjs draws every screen inside #app. -->
 <html lang="en">
 <head>
+  <!-- viewport makes the page fit phone screens; theme-color tints the browser toolbar on phones; description is the summary search engines show. -->
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f9f8f3"><meta name="description" content="A little curiosity. A world of possibility. Discover a personalized way to learn AI with Fairylearn AI.">
   <title>Fairylearn AI — A little curiosity goes a long way.</title>
+  <!-- The logo doubles as the browser-tab icon and is preloaded so it appears without a delay. -->
   <link rel="icon" type="image/png" href="/logo.png">
   <link rel="preload" href="/logo.png" as="image">
+  <!-- type="module" lets app.mjs use import/export and top-level await. Module scripts wait for the page to be parsed before they run, so #app already exists. -->
   <link rel="stylesheet" href="/styles.css"><script type="module" src="/app.mjs"></script>
 </head>
+<!-- #app holds the current screen. #toast shows short messages; role="status" with aria-live="polite" makes screen readers announce them. -->
 <body><div id="app"></div><div id="toast" role="status" aria-live="polite"></div></body>
 </html>

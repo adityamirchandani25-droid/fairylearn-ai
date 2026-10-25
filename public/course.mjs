@@ -1,5 +1,19 @@
 // The three public modules map to the 2027–2028 TSA Webmaster challenge.
 // Wording is original; source material is credited on the References page.
+//
+// The three free lessons anyone can take without an account. Each module has:
+//   id       — a stable name used for progress, best scores and trophies (do not rename);
+//   number   — the "LESSON 01" label;
+//   icon     — the symbol on its card;
+//   category — the small heading above the title;
+//   title, summary, time — what the course page shows on the card;
+//   badge    — the badge earned by passing the lesson's quiz;
+//   sections — the three explanations shown in the lesson;
+//   task     — the hands-on "Your turn" activity;
+//   quiz     — the questions (see public/quiz.mjs for the question format);
+//   source   — the main reference linked at the bottom of the lesson.
+// In each quiz question, `answer` is the position of the correct choice in the list as written
+// here (0 = first). The quiz shuffles the choices on screen, so the correct one moves around.
 export const courseModules = [
   {
     id: 'foundations', number: '01', icon: '✧', category: 'AI FUNDAMENTALS', title: 'How does AI learn?',
@@ -69,6 +83,9 @@ export const courseModules = [
   }
 ];
 
+// One extra question per module, in the same order as the modules (foundations, tools, ethics).
+// The line below adds each to the end of its module's quiz when this file loads, so every
+// public quiz has five questions.
 const extraQuestions = [
   { question: 'A model is tested on examples it already saw during training. What would make the test more useful?', choices: ['Try new examples the model has not seen.', 'Repeat the same examples again.', 'Only test examples it got right.', 'Stop checking predictions.'], answer: 0, hint: 'A useful test checks more than memorization.', explanation: 'Unseen examples help show whether learned patterns work in new situations.' },
   { question: 'You want three short project ideas, but an AI gives a long essay. What should you clarify?', choices: ['The requested number and output format.', 'Your private account password.', 'That every response must be true.', 'Nothing; always accept the first response.'], answer: 0, hint: 'Think about the shape of the answer you need.', explanation: 'Specify three ideas and the desired length so the response fits your task.' },
@@ -76,6 +93,9 @@ const extraQuestions = [
 ];
 courseModules.forEach((module, index) => module.quiz.push(extraQuestions[index]));
 
+// courseIds: the ids of the public modules.
+// completedCourseIds: cleans a progress list read from browser storage. It keeps only real
+// module ids and removes duplicates, so edited or outdated data cannot break the course page.
 export const courseIds = courseModules.map(module => module.id);
 export function completedCourseIds(value) {
   return Array.isArray(value) ? [...new Set(value.filter(id => courseIds.includes(id)))] : [];

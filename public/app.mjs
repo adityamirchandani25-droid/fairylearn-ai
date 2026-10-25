@@ -1,4 +1,5 @@
 import { questions, levels, validAnswers, planDescription } from './learning.mjs';
+import { openGameSheet, closeGameSheet } from './game-motion.mjs';
 import { attachMotion, logoMarkup, startLoading } from './motion.mjs';
 import { courseModules, completedCourseIds } from './course.mjs';
 import { pathLessons, findPathLesson, fallbackLearningPlan, validLearningPlan, resolvePlanLesson, lessonKey } from './path-lessons.mjs';
@@ -82,6 +83,7 @@ function saveRewards() {
 }
 function refreshRewardDisplays() {
   applyPerks();
+  document.querySelectorAll('[data-perk-bag]').forEach(bag => { bag.innerHTML = perkBagMarkup(); });
   document.querySelectorAll('[data-trophy-balance]').forEach(element => { element.textContent = trophyBalance(wallet); });
   document.querySelectorAll('[data-trophy-pocket]').forEach(button => button.setAttribute('aria-label', `Item shop, ${trophyBalance(wallet)} trophies`));
 }
@@ -138,11 +140,11 @@ function studyJournal() {
 function openShop() {
   shopMessage = ''; shopCategory = 'all';
   renderShop();
-  if (!shopDialog.open) shopDialog.showModal();
+  openGameSheet(shopDialog);
 }
 function renderShop() {
   const balance = trophyBalance(wallet);
-  shopDialog.innerHTML = `<div class="shop-heading"><div><div class="eyebrow">A LITTLE EXTRA FOR YOUR JOURNEY</div><h2 id="shop-title">The item <em>shop.</em></h2></div><button class="shop-close" data-shop-close aria-label="Close item shop" autofocus>×</button></div><div class="shop-wallet"><div class="shop-wallet-icon">${trophyIcon()}</div><div><strong>${balance}</strong><span>TROPHIES TO SPEND</span></div><p>${earnedTrophies(wallet)} / 400 earned in your lifetime<br>Spending does not reset this cap.</p></div><p class="shop-intro">${shopItems.length} perks, from 3 to 200 trophies. Use quiz help, equip study tools, or give your journey a new look.</p><p class="shop-status" role="status" aria-live="polite">${escape(shopMessage)}</p><div class="lifetime-progress" role="progressbar" aria-label="Lifetime trophy earnings" aria-valuemin="0" aria-valuemax="400" aria-valuenow="${earnedTrophies(wallet)}"><span style="width:${earnedTrophies(wallet) / 4}%"></span></div><div class="shop-categories" aria-label="Shop categories">${[['all', 'All perks'], ['quiz', 'Quiz help'], ['study', 'Study tools'], ['style', 'Style']].map(([id, label]) => `<button data-shop-category="${id}" aria-pressed="${shopCategory === id}">${label}</button>`).join('')}</div><div class="shop-grid">${shopItems.filter(item => shopCategory === 'all' || (shopCategory === 'quiz' ? item.type === 'consumable' : shopCategory === 'study' ? ['focus-lens', 'study-timer', 'mastery-journal'].includes(item.id) : !['focus-lens', 'study-timer', 'mastery-journal'].includes(item.id) && item.type === 'permanent')).map(item => {
+  shopDialog.innerHTML = `<button class="sheet-handle" data-sheet-handle data-shop-close aria-label="Dismiss shop sheet"><span></span></button><div class="shop-heading"><div><div class="eyebrow">A LITTLE EXTRA FOR YOUR JOURNEY</div><h2 id="shop-title">The item <em>shop.</em></h2></div><button class="shop-close" data-shop-close aria-label="Close item shop" autofocus>×</button></div><div class="shop-wallet"><div class="shop-wallet-icon">${trophyIcon()}</div><div><strong>${balance}</strong><span>TROPHIES TO SPEND</span></div><p>${earnedTrophies(wallet)} / 400 earned in your lifetime<br>Spending does not reset this cap.</p></div><p class="shop-intro">${shopItems.length} perks, from 3 to 200 trophies. Use quiz help, equip study tools, or give your journey a new look.</p><p class="shop-status" role="status" aria-live="polite">${escape(shopMessage)}</p><div class="lifetime-progress" role="progressbar" aria-label="Lifetime trophy earnings" aria-valuemin="0" aria-valuemax="400" aria-valuenow="${earnedTrophies(wallet)}"><span style="width:${earnedTrophies(wallet) / 4}%"></span></div><div class="shop-categories" aria-label="Shop categories">${[['all', 'All perks'], ['quiz', 'Quiz help'], ['study', 'Study tools'], ['style', 'Style']].map(([id, label]) => `<button data-shop-category="${id}" aria-pressed="${shopCategory === id}">${label}</button>`).join('')}</div><div class="shop-grid">${shopItems.filter(item => shopCategory === 'all' || (shopCategory === 'quiz' ? item.type === 'consumable' : shopCategory === 'study' ? ['focus-lens', 'study-timer', 'mastery-journal'].includes(item.id) : !['focus-lens', 'study-timer', 'mastery-journal'].includes(item.id) && item.type === 'permanent')).map(item => {
     const owned = itemCount(wallet, item.id);
     const permanent = item.type === 'permanent';
     const equipped = !!wallet.equipped[item.id];
@@ -153,7 +155,7 @@ function renderShop() {
 shopDialog.addEventListener('click', event => {
   const category = event.target.closest('[data-shop-category]');
   if (category) { shopCategory = category.dataset.shopCategory; renderShop(); shopDialog.querySelector(`[data-shop-category="${shopCategory}"]`)?.focus(); return; }
-  if (event.target.closest('[data-shop-close]')) { shopDialog.close(); return; }
+  if (event.target.closest('[data-shop-close]')) { closeGameSheet(shopDialog); return; }
   const buy = event.target.closest('[data-buy-item]');
   const equip = event.target.closest('[data-equip-item]');
   if (!buy && !equip) return;
@@ -202,8 +204,29 @@ function toggleTheme() {
     button.title = `Switch to ${theme === 'day' ? 'night' : 'day'} mode`;
   });
 }
-function toast(text) { const el = document.querySelector('#toast'); el.textContent = text; el.classList.add('visible'); clearTimeout(toast.timer); toast.timer = setTimeout(() => el.classList.remove('visible'), 4200); }
-function header(simple = false) { renderStudyTimer(); return `<header class="header"><a class="brand" href="#" data-action="home">${star}<span>fairylearn<span class="brand-ai">AI</span></span></a>${simple ? `<div class="simple-header-actions"><span class="header-note">Your next chapter starts here.</span>${trophyPocket()}${themeButton()}</div>` : `<nav aria-label="Main navigation"><a href="#how-it-works" data-action="how">How it works</a><a href="#paths" data-action="paths">Learning paths</a><button class="nav-link" data-action="course">Explore lessons</button><button class="nav-link" data-action="quizzes">Quizzes</button></nav><div class="header-actions">${trophyPocket()}${themeButton()}${currentUser() ? '<button class="text-button" data-action="dashboard">My path ↗</button><button class="text-button" data-action="logout">Log out</button>' : '<button class="text-button" data-action="login">Log in</button><button class="button small dark" data-action="signup">Get started <span>↗</span></button>'}</div>`}</header>`; }
+function toast(text) { const el = document.querySelector('#toast'); el.classList.toggle('is-achievement', /troph|badge|complete/i.test(text)); el.textContent = text; el.classList.add('visible'); clearTimeout(toast.timer); toast.timer = setTimeout(() => el.classList.remove('visible'), 4200); }
+function gameIcon(name) {
+  const paths = {
+    map: '<path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2V5Zm6-2v16m6-14v16"/>',
+    spark: '<path d="m12 2 2.6 7.4L22 12l-7.4 2.6L12 22l-2.6-7.4L2 12l7.4-2.6L12 2Z"/>',
+    book: '<path d="M12 5C8 2 4 3 3 4v15c3-1 6-1 9 1m0-15c4-3 8-2 9-1v15c-3-1-6-1-9 1V5Z"/>',
+    bag: '<path d="M5 7h14l1 14H4L5 7Zm3 1V6a4 4 0 0 1 8 0v2"/>',
+    flag: '<path d="M5 22V3m0 1c4-4 10 4 14 0v10c-4 4-10-4-14 0"/>',
+    check: '<path d="m5 12 5 5L20 6"/>',
+    lock: '<rect x="6" y="10" width="12" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/>',
+    quiz: '<path d="M9 3H6a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-3M9 2h6v4H9V2Zm-1 9h8m-8 4h5"/>',
+    arrow: '<path d="M4 12h16m-6-6 6 6-6 6"/>'
+  };
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.spark}</svg>`;
+}
+function header(simple = false) {
+  renderStudyTimer();
+  const playing = ['dashboard', 'quizzes', 'personal-lesson', 'practice-quiz', 'course', 'course-lesson', 'unit-test'].includes(currentView);
+  document.documentElement.dataset.scene = playing ? 'play' : 'site';
+  const journeyAction = currentUser() || validAnswers(answers) ? 'dashboard' : 'demo';
+  const nav = [['dashboard', 'Journey', 'map', journeyAction], ['quizzes', 'Quizzes', 'quiz', 'quizzes'], ['shop', 'Item shop', 'bag', 'shop']].map(([view, label, icon, action]) => `<button data-action="${action}" ${view === currentView || view === 'quizzes' && ['practice-quiz','unit-test'].includes(currentView) ? 'aria-current="page"' : ''}>${gameIcon(icon)}<span>${label}</span></button>`).join('');
+  return `<header class="header"><a class="brand" href="#" data-action="home">${star}<span>fairylearn<span class="brand-ai">AI</span></span></a>${simple ? `<div class="simple-header-actions"><span class="header-note">One little discovery at a time.</span>${trophyPocket()}${themeButton()}</div>` : `${playing ? `<nav class="play-navigation" aria-label="Main navigation">${nav}</nav>` : '<nav aria-label="Main navigation"><a href="#how-it-works" data-action="how">How it works</a><button class="nav-link" data-action="course">Explore lessons</button><button class="nav-link" data-action="quizzes">Quizzes</button></nav>'}<div class="header-actions">${trophyPocket()}${themeButton()}${currentUser() ? '<button class="text-button" data-action="logout">Log out</button>' : '<button class="text-button" data-action="login">Log in</button><button class="button small dark" data-action="signup">Get started <span>↗</span></button>'}</div>`}</header>${playing ? `<nav class="game-dock" aria-label="Learning navigation">${nav}</nav>` : ''}`;
+}
 function footer() { return `<footer><a class="brand" href="#" data-action="home">${star}<span>fairylearn<span class="brand-ai">AI</span></span></a><p>A little curiosity goes a long way.</p><a class="footer-reference" href="/references.html">Sources &amp; project credits ↗</a><span>Made for human potential. ✧</span></footer>`; }
 function illustration() { return `<div class="illustration" aria-label="An illustrated winding path through a world of AI discoveries" role="img"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><div class="sky-star s1">✧</div><div class="sky-star s2">✦</div><div class="sky-star s3">✧</div><div class="sky-star s4">+</div><div class="float-tag tag-top"><i class="dot"></i> A path that’s uniquely yours</div><svg class="journey-svg" viewBox="0 0 520 440" fill="none" aria-hidden="true"><path d="M80 410C65 325 390 373 382 283C376 215 148 283 159 190C166 131 318 166 319 80" stroke="#e4e1d6" stroke-width="56"/><path d="M80 410C65 325 390 373 382 283C376 215 148 283 159 190C166 131 318 166 319 80" stroke="#fffdf7" stroke-width="44"/><path d="M80 410C65 325 390 373 382 283C376 215 148 283 159 190C166 131 318 166 319 80" stroke="#c4bcd5" stroke-width="2" stroke-dasharray="7 9"/><ellipse cx="319" cy="82" rx="32" ry="11" fill="#c3b6e0"/><path d="M319 80V20" stroke="#655784" stroke-width="3"/><path d="M321 21L355 30L321 43Z" fill="#9678c0"/></svg><div class="world-card card-spark"><span>✦</span><small>BIG IDEAS</small></div><div class="world-card card-book"><span>▤</span><small>SMALL STEPS</small></div><div class="world-card card-bot"><span class="robot"><i></i><i></i></span><small>YOUR AI GUIDE</small></div><div class="plant plant-one">✳</div><div class="plant plant-two">✳</div><div class="float-tag tag-bottom"><span>✧</span> A little wiser, every day.</div></div>`; }
 function home() {
@@ -437,7 +460,7 @@ async function openPersonalLesson(level, index, id) {
   const topic = resolvePlanLesson(learningPlan, reference);
   if (!topic) return;
   if (!currentUser()) { guideRoot.innerHTML = ''; auth('signup'); return; }
-  if (!config.aiLessonsEnabled) { toast('Personal lessons need an OpenAI key on the server.'); return; }
+  if (!config.aiLessonsEnabled) { toast('Your AI lessons are unavailable right now. Please try again later.'); return; }
   const key = personalKey(level, index, id);
   if (personalLessons[key]) { renderLesson(personalLessons[key], true); window.scrollTo(0, 0); return; }
   busy = true;
@@ -454,36 +477,45 @@ async function openPersonalLesson(level, index, id) {
 function currentLearningPlan() {
   return validLearningPlan(learningPlan) ? learningPlan : fallbackLearningPlan(answers);
 }
+function perkBagMarkup() {
+  const inventory = shopItems.filter(item => itemCount(wallet, item.id) > 0);
+  return `<div class="quest-card-title">${gameIcon('bag')}<h2>Your perk bag</h2><button class="inline-button" data-action="shop">Shop ↗</button></div>${inventory.length ? `<div class="bag-inventory">${inventory.slice(0, 6).map(item => `<button data-action="shop" title="${escape(item.name)}"><span>${item.icon}</span><small>${item.type === 'consumable' ? itemCount(wallet, item.id) : wallet.equipped[item.id] ? '✓' : '·'}</small><span class="visually-hidden">${escape(item.name)}</span></button>`).join('')}</div><p>Little extras you’ve earned along the way.${inventory.length > 6 ? ` Plus ${inventory.length - 6} more in the shop.` : ''}</p>` : '<div class="bag-empty"><span>✧</span><p>There’s room for a little magic.</p></div><p>Earn trophies, then pick up a perk for your next adventure.</p>'}<button class="button shop-visit full" data-action="shop">Visit the item shop <span>↗</span></button>`;
+}
 function dashboard() {
   currentView = 'dashboard';
   const plan = currentLearningPlan();
   const completed = plan.lessons.filter(item => completedPersonalLessons.includes(lessonKey(item))).length;
   const next = plan.lessons.findIndex(item => !completedPersonalLessons.includes(lessonKey(item)));
   const total = plan.lessons.length;
+  const current = next >= 0 ? plan.lessons[next] : null;
+  const topic = current ? resolvePlanLesson(plan, current) : null;
+  const rank = completed >= 30 ? 'Wayfinder' : completed >= 15 ? 'Pathfinder' : completed >= 5 ? 'Trailblazer' : 'Explorer';
+  const stage = Math.floor((next < 0 ? total - 1 : next) / 6) + 1;
+  const nextAction = current ? currentUser() ? `data-personal-lesson="${current.index}" data-personal-level="${current.level}" ${current.id ? `data-personal-id="${current.id}"` : ''}` : 'data-action="signup"' : currentUser() ? 'data-action="continue-path"' : 'data-action="signup"';
   const rows = Math.ceil(total / 4);
   const points = plan.lessons.map((_, i) => {
     const row = Math.floor(i / 4), col = row % 2 ? 3 - i % 4 : i % 4;
-    return { x: 125 + col * 250, y: 88 + row * 235 + [16, -16, 16, -16][col] };
+    return { x: 125 + col * 250, y: 95 + row * 235 + [12, -18, 12, -18][col] };
   });
-  const curve = points.map((point, i) => {
+  const draw = points => points.map((point, i) => {
     if (!i) return `M ${point.x} ${point.y}`;
     const previous = points[i - 1];
     if (previous.x === point.x) return `C ${point.x + (point.x > 500 ? 95 : -95)} ${previous.y + 70}, ${point.x + (point.x > 500 ? 95 : -95)} ${point.y - 70}, ${point.x} ${point.y}`;
     return `C ${(previous.x + point.x) / 2} ${previous.y}, ${(previous.x + point.x) / 2} ${point.y}, ${point.x} ${point.y}`;
   }).join(' ');
-  app.innerHTML = `${header()}<main class="dashboard journey-dashboard"><div class="dashboard-greeting"><div><div class="eyebrow">YOUR OWN LITTLE WAY FORWARD</div><h1>${name ? `${escape(name)}’s next` : 'Your next'} <em>chapter.</em></h1><p>A little learning. A little practice. A world of possibility.</p></div><div class="journey-level"><span>✧</span><div><small>YOUR STARTING POINT</small><strong>${escape(plan.level)}</strong></div></div></div>
-  ${!currentUser() ? '<div class="preview-notice"><span>✧ A preview of your journey. Create an account for AI placement, tailored lessons, and your guide.</span><button class="inline-button" data-action="signup">Create an account →</button></div>' : ''}
-  ${rewardsBar()}${studyJournal()}<section class="journey-summary"><div class="journey-summary-copy"><div class="eyebrow">${plan.ai ? 'CHOSEN FOR YOU BY AI' : 'YOUR STANDARD STARTING PATH'}</div><p>${escape(description || planDescription(answers))}</p>${currentUser() && !plan.ai ? '<small>AI placement is unavailable. You can follow this starting path or retry by updating your answers.</small>' : ''}<button class="inline-button" data-action="retake">Update my answers ↗</button></div><div class="journey-progress"><div><strong>${completed}<span> / ${total}</span></strong><small>LESSONS COMPLETE</small></div><div class="journey-progress-track" role="progressbar" aria-label="Path completion" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${completed}"><span style="width:${completed / total * 100}%"></span></div><p>${next < 0 ? 'You did it. Revisit any stop to keep practicing.' : 'One small discovery at a time.'}</p></div></section>
-  ${quizInvitation()}<section class="journey-section" aria-labelledby="journey-title"><div class="journey-section-heading"><div><div class="eyebrow">FOLLOW YOUR CURIOSITY</div><h2 id="journey-title">Your learning journey</h2></div><span class="journey-legend"><i></i> Your next lesson</span></div><p class="journey-instruction">Start with the glowing circle. Finish each lesson’s knowledge check to take your next step.</p>
-  <div class="journey-map" style="--map-height:${rows * 235}px"><svg class="journey-connections" viewBox="0 0 1000 ${rows * 235}" preserveAspectRatio="none" aria-hidden="true"><path class="journey-track-shadow" d="${curve}"/><path class="journey-track" d="${curve}"/></svg><ol class="journey-stops" aria-label="Your recommended lessons">${plan.lessons.map((item, i) => {
+  const circumference = 2 * Math.PI * 45;
+  app.innerHTML = `${header()}<main class="dashboard journey-dashboard quest-dashboard"><div class="quest-welcome"><div><div class="eyebrow">YOUR WORLD OF LITTLE DISCOVERIES</div><h1>${name ? `Welcome back, <em>${escape(name)}.</em>` : 'A little curiosity.<br><em>A new adventure.</em>'}</h1></div><span class="quest-rank">${gameIcon('flag')} ${rank}<small>${escape(plan.level)}</small></span></div>
+  ${!currentUser() ? '<div class="preview-notice quest-preview"><span>✧ A peek at your adventure. Create an account for AI-tailored lessons and your own saved path.</span><button class="inline-button" data-action="signup">Make it mine →</button></div>' : ''}
+  <section class="quest-mission" aria-labelledby="mission-title"><div class="mission-copy"><span class="mission-kicker"><i></i> ${next < 0 ? 'CHAPTER COMPLETE' : 'YOUR NEXT MISSION'}</span><h2 id="mission-title">${topic ? escape(topic.title) : 'A new chapter awaits.'}</h2><p>${topic ? 'A small lesson. A fresh perspective. Your next step into a bigger world of AI.' : 'You’ve explored every stop. Let’s see where your curiosity takes you next.'}</p><div class="mission-actions"><button class="button purple mission-start" ${nextAction}>${topic ? currentUser() ? 'Continue adventure' : 'Begin my adventure' : 'Discover my next chapter'} ${gameIcon('arrow')}</button><span>${gameIcon('book')} ${escape(answers.pace || '10')}-min learning pace <b>·</b> +1 lesson trophy</span></div></div><div class="mission-orbit" aria-label="${completed} of ${total} lessons complete"><span class="orbit-mark orbit-mark-one">✧</span><span class="orbit-mark orbit-mark-two">✦</span><svg class="mission-ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="45"/><circle class="mission-ring-value" cx="60" cy="60" r="45" stroke-dasharray="${circumference}" stroke-dashoffset="${circumference * (1 - completed / total)}"/></svg><div class="mission-emblem">${gameIcon(next < 0 ? 'check' : 'spark')}</div><span class="mission-orbit-caption">STAGE ${String(stage).padStart(2, '0')}</span></div></section>
+  <div class="quest-hud" aria-label="Adventure progress"><div>${gameIcon('map')}<span><strong>${completed}<small> / ${total}</small></strong><span>Lessons explored</span></span></div><button data-action="shop">${trophyIcon()}<span><strong data-trophy-balance>${trophyBalance(wallet)}</strong><span>Trophies to spend</span></span><span class="hud-arrow">↗</span></button><div>${gameIcon('flag')}<span><strong>${earnedTrophies(wallet)}<small> / 400</small></strong><span>Lifetime trophies</span></span></div></div>
+  <div class="quest-board"><section class="journey-section" aria-labelledby="journey-title"><div class="journey-section-heading"><div><div class="eyebrow">ONE STOP AT A TIME</div><h2 id="journey-title">The path is yours.</h2></div><span class="journey-legend"><i></i> Up next</span></div><p class="journey-instruction">Follow the trail. Finish a lesson’s quiz to unlock your next discovery.</p>
+  <div class="journey-map" style="--map-height:${rows * 235}px"><svg class="journey-connections" viewBox="0 0 1000 ${rows * 235}" preserveAspectRatio="none" aria-hidden="true"><path class="journey-track-shadow" d="${draw(points)}"/><path class="journey-track" d="${draw(points)}"/><path class="journey-track-progress" d="${draw(points.slice(0, next < 0 ? points.length : next + 1))}"/></svg><ol class="journey-stops" aria-label="Your recommended lessons">${plan.lessons.map((item, i) => {
     const topic = resolvePlanLesson(plan, item);
-    const done = completedPersonalLessons.includes(lessonKey(item));
-    const isNext = i === next;
-    const locked = !done && !isNext;
+    const done = completedPersonalLessons.includes(lessonKey(item)), isNext = i === next, locked = !done && !isNext;
     const point = points[i];
-    return `<li class="journey-stop ${done ? 'is-complete' : isNext ? 'is-next' : 'is-upcoming'}" style="--stop-x:${point.x / 10}%;--stop-y:${point.y}px"><button class="lesson-circle" data-personal-lesson="${item.index}" data-personal-level="${item.level}" ${item.id ? `data-personal-id="${item.id}"` : ''} ${locked ? 'disabled' : ''} ${isNext ? 'aria-current="step"' : ''} aria-label="${escape(`${i + 1}. ${topic.title}. ${done ? 'Completed, review lesson' : isNext ? 'Start next lesson' : 'Complete earlier lessons to unlock'}`)}"><span aria-hidden="true">${done ? '✓' : locked ? '◇' : '✦'}</span><small>${String(i + 1).padStart(2, '0')}</small></button><div class="stop-caption"><span>${done ? 'COMPLETED' : isNext ? 'UP NEXT' : escape(item.level.toUpperCase())}</span><h3>${escape(topic.title)}</h3>${isNext ? `<p>${currentUser() ? 'Your next little discovery →' : 'Create an account to begin →'}</p>` : ''}</div></li>`;
-  }).join('')}</ol></div><div class="journey-finish"><span>✧</span><h2>Your journey keeps growing.</h2><p>AI adds another chapter as you near the end. You can also plan six fresh lessons here whenever you’re ready.</p>${currentUser() ? `<button class="button purple" data-action="continue-path" ${!config.aiLessonsEnabled ? 'disabled' : ''}>Generate my next 6 lessons <span>↗</span></button>` : '<button class="button purple" data-action="signup">Create an account to keep learning <span>↗</span></button>'}</div></section>
-  <section class="journey-guide-card"><div class="guide-card-symbol" aria-hidden="true">✳</div><div><div class="eyebrow">A LITTLE HELP ALONG THE WAY</div><h2>Meet your AI guide.</h2><p>Ask a question, try a different explanation, or get a hint when you’re stuck.</p></div><button class="button purple" data-action="open-guide">Ask your guide <span>↗</span></button></section></main>${footer()}`;
+    return `<li class="journey-stop ${done ? 'is-complete' : isNext ? 'is-next' : 'is-upcoming'}" style="--stop-x:${point.x / 10}%;--stop-y:${point.y}px">${isNext ? '<span class="node-next-label">LET’S GO</span>' : ''}<button class="lesson-circle" data-personal-lesson="${item.index}" data-personal-level="${item.level}" ${item.id ? `data-personal-id="${item.id}"` : ''} ${locked ? 'disabled' : ''} ${isNext ? 'aria-current="step"' : ''} title="${escape(topic.title)}" aria-label="${escape(`${i + 1}. ${topic.title}. ${done ? 'Completed, review lesson' : isNext ? 'Start next lesson' : 'Complete earlier lessons to unlock'}`)}"><span>${gameIcon(done ? 'check' : locked ? 'lock' : ['spark','book','quiz','flag'][i % 4])}</span><small>${String(i + 1).padStart(2, '0')}</small></button><div class="stop-caption"><span>${done ? 'DISCOVERED' : isNext ? 'YOUR NEXT STEP' : `LESSON ${String(i + 1).padStart(2, '0')}`}</span><h3>${escape(topic.title)}</h3></div></li>`;
+  }).join('')}</ol></div><div class="journey-finish">${gameIcon('flag')}<h2>Curiosity has no finish line.</h2><p>AI creates the next chapter as you go. There’s always another little discovery ahead.</p>${currentUser() ? `<button class="button outline" data-action="continue-path" ${!config.aiLessonsEnabled ? 'disabled' : ''}>Generate my next 6 lessons <span>↗</span></button>` : '<button class="button purple" data-action="signup">Create my adventure <span>↗</span></button>'}</div></section>
+  <aside class="quest-sidebar" aria-label="Adventure tools"><section class="quest-guide"><div class="quest-guide-avatar">${star}<i></i></div><div class="eyebrow">A LITTLE MAGIC IN YOUR CORNER</div><h2>Your AI guide.</h2><p>A different explanation. A helpful hint. A nudge in the right direction.</p><button class="button outline full" data-action="open-guide">Ask your guide ${gameIcon('arrow')}</button></section><section class="quest-bag" data-perk-bag>${perkBagMarkup()}</section><section class="quest-quiz-card"><span>${gameIcon('quiz')}</span><div class="eyebrow">READY FOR A CHALLENGE?</div><h2>Test your know-how.</h2><p>Short quizzes. Helpful hints. A chance to earn up to 5 trophies.</p><button class="inline-button" data-action="quizzes">Explore quizzes →</button></section><details class="quest-profile"><summary>Your journey, your way <span>⌄</span></summary><p>${escape(description || planDescription(answers))}</p><small>${plan.ai ? 'AI-tailored path' : 'Standard starting path'} · ${escape(plan.level)} · ${escape(answers.pace || '10')} min/day</small><button class="inline-button" data-action="retake">Update my answers ↗</button></details></aside></div>${studyJournal()}</main>${footer()}`;
   renderGuide();
 }
 async function continuePath() {

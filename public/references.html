@@ -1,10 +1,12 @@
 <!doctype html>
+<!-- references.html is a plain static page (no JavaScript app) listing the content sources, tools, fonts and AI assistance used to build the site. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f9f8f3"><meta name="description" content="Sources, credits, and AI use for Fairylearn AI.">
   <title>Sources & Project Credits — Fairylearn AI</title>
   <link rel="icon" type="image/png" href="/logo.png"><link rel="stylesheet" href="/styles.css">
+  <!-- This tiny inline script runs before the page is drawn and applies the saved day/night theme, so the page never flashes the wrong colours. It is wrapped in try/catch in case localStorage is unavailable. -->
   <script>try{const night=JSON.parse(localStorage.getItem('fairylearn-theme'))==='night';document.documentElement.dataset.theme=night?'night':'day';if(night)document.querySelector('meta[name="theme-color"]').content='#171b23'}catch{}</script>
 </head>
 <body>
@@ -12,6 +14,7 @@
   <main class="references-page">
     <div class="eyebrow">WHAT SHAPED THIS SITE</div><h1>Sources &amp; <em>project credits.</em></h1>
     <p class="references-intro">These sources support the learning modules and document the tools used to build the site. Lesson explanations and examples were written for this project; they are not copied from the linked works.</p>
+    <!-- Learning content: each source used by the lessons, with a note on how it was used. rel="noopener noreferrer" stops the opened site from controlling this tab. -->
     <section><h2>Learning content</h2><ol>
       <li><a href="https://developers.google.com/machine-learning/intro-to-ml/what-is-ml" target="_blank" rel="noopener noreferrer">Google for Developers, “What is Machine Learning?” ↗</a><p>Used for the basic explanation of models, training examples, prediction, and generation in Lesson 1.</p></li>
       <li><a href="https://developers.google.com/machine-learning/crash-course/llm" target="_blank" rel="noopener noreferrer">Google for Developers, “Introduction to Large Language Models” ↗</a><p>Further reading for the generative AI and language model learning paths.</p></li>
@@ -21,6 +24,7 @@
       <li><a href="https://developers.openai.com/api/docs/guides/text" target="_blank" rel="noopener noreferrer">OpenAI, “Text generation” ↗</a><p>Further reading for the advanced building-with-models learning path.</p></li>
       <li><a href="https://tsaweb.org/competitions/themes-and-problems?hspage=4&amp;mspage=3" target="_blank" rel="noopener noreferrer">Technology Student Association, “Themes and Problems: Webmaster” ↗</a><p>Used to match the 2027–2028 high school Webmaster challenge: AI fundamentals, practical tools, ethical use, and progress tracking.</p></li>
     </ol></section>
+    <!-- Tools, services, fonts, the logo and a disclosure of AI assistance. -->
     <section><h2>Tools, assets, and AI assistance</h2><ul>
       <li><strong>Frameworks:</strong> No website builder, CMS, React, Vue, or other front-end framework is used. The site uses original HTML, CSS, and JavaScript with a Node.js server.</li>
       <li><strong>Services:</strong> <a href="https://supabase.com/docs/guides/auth" target="_blank" rel="noopener noreferrer">Supabase Auth documentation ↗</a> guided account access; <a href="https://developers.openai.com/api/docs/guides/structured-outputs" target="_blank" rel="noopener noreferrer">OpenAI Structured Outputs documentation ↗</a> guided server-side personal lessons.</li>

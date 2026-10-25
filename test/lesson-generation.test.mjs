@@ -1,3 +1,5 @@
+// Tests for lesson-generation.mjs. `lesson` is a well-formed AI lesson; the tests send it
+// through a fake OpenAI call or change parts of it to check that validation catches problems.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { generatePersonalLesson, validateGeneratedLesson } from '../lesson-generation.mjs';
@@ -22,6 +24,8 @@ const lesson = {
 
 lesson.quiz.push({ question: 'What information should you keep out of practice prompts?', choices: ['Private details about real people.', 'Fictional examples.', 'The task you want help with.', 'A requested format.'], answer: 0, hint: 'Practice can use made-up examples.', explanation: 'Avoid sharing private information when using AI tools.' });
 
+// The request to OpenAI is private (store: false), uses strict structured output, describes the
+// learner with readable labels, and asks for a five-question quiz with hints.
 test('lesson generation sends a structured, private request based on approved profile choices', async () => {
   let request;
   const result = await generatePersonalLesson({
@@ -42,18 +46,21 @@ test('lesson generation sends a structured, private request based on approved pr
   assert.equal(result.sections.length, 3);
 });
 
+// Lessons with missing sections, too few quiz questions or impossible answer positions are refused.
 test('malformed AI lessons cannot unlock an incorrect quiz', () => {
   assert.throws(() => validateGeneratedLesson({ ...lesson, sections: [] }), /incomplete lesson/);
   assert.throws(() => validateGeneratedLesson({ ...lesson, quiz: lesson.quiz.slice(0, 2) }), /incomplete lesson/);
   assert.throws(() => validateGeneratedLesson({ ...lesson, quiz: lesson.quiz.map(item => ({ ...item, answer: 7 })) }), /incomplete lesson/);
 });
 
+// One broken question is dropped as long as five good ones remain, and extra questions are cut to five.
 test('one malformed quiz question is dropped instead of failing the whole lesson', () => {
   const result = validateGeneratedLesson({ ...lesson, quiz: [...lesson.quiz, { ...lesson.quiz[0], choices: ['Same', 'Same', 'Same'] }] });
   assert.equal(result.quiz.length, 5);
   assert.equal(validateGeneratedLesson({ ...lesson, quiz: [...lesson.quiz, ...lesson.quiz] }).quiz.length, 5);
 });
 
+// Only real catalog positions can be looked up; text such as '0' is not accepted as an index.
 test('lesson requests can only select approved level topics', () => {
   assert.equal(findPathLesson('Starter', 0)?.title, 'Hello, artificial intelligence');
   assert.equal(findPathLesson('Expert', 2)?.title, 'Evaluating responsible AI systems');
