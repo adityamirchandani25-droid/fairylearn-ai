@@ -256,3 +256,7 @@ body{transition:background-color .28s ease,color .28s ease}
 :root[data-theme=night] .references-page li p{color:#bdc5ce}
 @media(max-width:760px){.references-page{padding:37px 24px 60px}.references-header{gap:12px}.references-header .brand{font-size:18px}.references-header .back-link{font-size:10px}}
 @media(max-width:420px){.header{padding:0 15px;gap:8px}.brand{font-size:17px;gap:5px}.brand-logo{width:30px;height:30px}.brand-ai{font-size:8px;margin-left:3px}.header-actions{gap:7px}.header-actions .text-button{font-size:11px;white-space:nowrap}.header-actions .button{font-size:10px;gap:7px;padding:9px 10px;white-space:nowrap}.references-header .brand{font-size:17px}}
+.ai-lesson-note{display:inline-block;margin-top:17px!important;padding:9px 13px;border:1px solid #dfd4eb;border-radius:8px;background:#f4edf9;color:#715b87!important;font-size:11px!important;line-height:1.6}
+.lesson-buttons button:not(:disabled):hover{border-color:#a88bbb;background:#f3edf8}
+:root[data-theme=night] .ai-lesson-note{background:#332a40;border-color:#67527c;color:#e0cbed!important}
+:root[data-theme=night] .lesson-buttons button:not(:disabled):hover{background:#39304a;border-color:#a888c4}

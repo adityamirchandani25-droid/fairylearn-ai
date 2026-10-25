@@ -1,6 +1,7 @@
 import { questions, levels, getLevel, validAnswers, planDescription } from './learning.mjs';
 import { attachMotion, logoMarkup, startLoading } from './motion.mjs';
 import { courseModules, completedCourseIds } from './course.mjs';
+import { pathLessons, findPathLesson } from './path-lessons.mjs';
 
 const app = document.querySelector('#app');
 let theme = read('fairylearn-theme') === 'night' ? 'night' : 'day';
@@ -17,8 +18,11 @@ let selectedLevel;
 let description = '';
 let busy = false;
 let completedModules = completedCourseIds(read('fairylearn-course-progress'));
-let activeModule = null;
 let selectedQuizAnswer = null;
+let activeLesson = null;
+let activeLessonIsPersonal = false;
+let personalLessons = {};
+let completedPersonalLessons = [];
 const configured = !!(config.supabaseUrl && config.supabaseAnonKey);
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const star = logoMarkup('brand-logo');
@@ -47,7 +51,7 @@ function footer() { return `<footer><a class="brand" href="#" data-action="home"
 function illustration() { return `<div class="illustration" aria-label="An illustrated winding path through a world of AI discoveries" role="img"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><div class="sky-star s1">✧</div><div class="sky-star s2">✦</div><div class="sky-star s3">✧</div><div class="sky-star s4">+</div><div class="float-tag tag-top"><i class="dot"></i> A path that’s uniquely yours</div><svg class="journey-svg" viewBox="0 0 520 440" fill="none" aria-hidden="true"><path d="M80 410C65 325 390 373 382 283C376 215 148 283 159 190C166 131 318 166 319 80" stroke="#e4e1d6" stroke-width="56"/><path d="M80 410C65 325 390 373 382 283C376 215 148 283 159 190C166 131 318 166 319 80" stroke="#fffdf7" stroke-width="44"/><path d="M80 410C65 325 390 373 382 283C376 215 148 283 159 190C166 131 318 166 319 80" stroke="#c4bcd5" stroke-width="2" stroke-dasharray="7 9"/><ellipse cx="319" cy="82" rx="32" ry="11" fill="#c3b6e0"/><path d="M319 80V20" stroke="#655784" stroke-width="3"/><path d="M321 21L355 30L321 43Z" fill="#9678c0"/></svg><div class="world-card card-spark"><span>✦</span><small>BIG IDEAS</small></div><div class="world-card card-book"><span>▤</span><small>SMALL STEPS</small></div><div class="world-card card-bot"><span class="robot"><i></i><i></i></span><small>YOUR AI GUIDE</small></div><div class="plant plant-one">✳</div><div class="plant plant-two">✳</div><div class="float-tag tag-bottom"><span>✧</span> A little wiser, every day.</div></div>`; }
 function home() {
   currentView = 'home';
-  app.innerHTML = `${header()}<main><section class="hero"><div class="hero-copy"><div class="eyebrow"><span></span> A LITTLE CURIOSITY. A WORLD OF POSSIBILITY.</div><h1>Big world of AI.<br>Your own <em>little<br>way in.</em><span class="title-star">✧</span></h1><p>AI doesn’t have to feel like another language.<br class="desktop-break"> Find your starting point, follow your curiosity, and learn<br class="desktop-break"> at a pace that feels like you.</p><div class="hero-actions"><button class="button purple" data-action="signup">Find my learning path <span>↗</span></button><span class="hero-caption">No experience needed.<br>Just a little wonder.</span></div><button class="demo-link" data-action="demo">Take a peek without an account <span>→</span></button></div>${illustration()}</section><div class="value-strip"><span><i>✧</i> Built around you</span><span><i>◷</i> Your pace, your progress</span><span><i>♧</i> From curious to confident</span><span><i>✳</i> A little help from AI</span></div><section class="how-section" id="how-it-works"><div class="section-intro"><div><div class="eyebrow">A PATH, NOT A LEAP</div><h2>Every great journey starts<br>with a little <em>hello.</em></h2></div><p>You bring the curiosity.<br>We’ll help you find your way.</p></div><div class="steps-grid"><article><span class="step-number">01 /</span><div class="step-icon lavender">☷</div><h3>Tell us a little about you</h3><p>A few quick questions about what you know, what you love, and where you want to go.</p><span class="mini-note">ABOUT 2 MINUTES</span></article><article><span class="step-number">02 /</span><div class="step-icon peach">⌁</div><h3>Find your starting point</h3><p>Get a personal learning path that fits your experience, goals, and everyday life.</p><span class="mini-note">MADE FOR YOU</span></article><article><span class="step-number">03 /</span><div class="step-icon sage">✧</div><h3>Grow one discovery at a time</h3><p>Start with three short lessons today. More level-specific lessons, slides, and a helpful AI guide are coming next.</p><span class="mini-note">SOMETHING TO LOOK FORWARD TO</span></article></div></section><section class="paths-section" id="paths"><div class="eyebrow">EVERY STARTING POINT BELONGS</div><h2>A little room for <em>everyone.</em></h2><p>Brand-new to AI or ready to go deeper? There’s a path for you.</p><div class="level-preview">${levels.map((level, i) => `<div><span class="level-glyph">${['·', '✧', '✳', '✺'][i]}</span><h3>${level}</h3><p>${['Start with the very basics.', 'Turn curiosity into confidence.', 'Put your knowledge to work.', 'Explore what’s possible next.'][i]}</p></div>`).join('')}</div><button class="button dark" data-action="signup">Let’s find your path <span>↗</span></button></section>${courseTeaser()}</main>${footer()}`;
+  app.innerHTML = `${header()}<main><section class="hero"><div class="hero-copy"><div class="eyebrow"><span></span> A LITTLE CURIOSITY. A WORLD OF POSSIBILITY.</div><h1>Big world of AI.<br>Your own <em>little<br>way in.</em><span class="title-star">✧</span></h1><p>AI doesn’t have to feel like another language.<br class="desktop-break"> Find your starting point, follow your curiosity, and learn<br class="desktop-break"> at a pace that feels like you.</p><div class="hero-actions"><button class="button purple" data-action="signup">Find my learning path <span>↗</span></button><span class="hero-caption">No experience needed.<br>Just a little wonder.</span></div><button class="demo-link" data-action="demo">Take a peek without an account <span>→</span></button></div>${illustration()}</section><div class="value-strip"><span><i>✧</i> Built around you</span><span><i>◷</i> Your pace, your progress</span><span><i>♧</i> From curious to confident</span><span><i>✳</i> A little help from AI</span></div><section class="how-section" id="how-it-works"><div class="section-intro"><div><div class="eyebrow">A PATH, NOT A LEAP</div><h2>Every great journey starts<br>with a little <em>hello.</em></h2></div><p>You bring the curiosity.<br>We’ll help you find your way.</p></div><div class="steps-grid"><article><span class="step-number">01 /</span><div class="step-icon lavender">☷</div><h3>Tell us a little about you</h3><p>A few quick questions about what you know, what you love, and where you want to go.</p><span class="mini-note">ABOUT 2 MINUTES</span></article><article><span class="step-number">02 /</span><div class="step-icon peach">⌁</div><h3>Find your starting point</h3><p>Get a personal learning path that fits your experience, goals, and everyday life.</p><span class="mini-note">MADE FOR YOU</span></article><article><span class="step-number">03 /</span><div class="step-icon sage">✧</div><h3>Grow one discovery at a time</h3><p>Start with three short lessons, then create a path of AI-made lessons shaped around your answers. Slides and a helpful AI guide are coming next.</p><span class="mini-note">SOMETHING TO LOOK FORWARD TO</span></article></div></section><section class="paths-section" id="paths"><div class="eyebrow">EVERY STARTING POINT BELONGS</div><h2>A little room for <em>everyone.</em></h2><p>Brand-new to AI or ready to go deeper? There’s a path for you.</p><div class="level-preview">${levels.map((level, i) => `<div><span class="level-glyph">${['·', '✧', '✳', '✺'][i]}</span><h3>${level}</h3><p>${['Start with the very basics.', 'Turn curiosity into confidence.', 'Put your knowledge to work.', 'Explore what’s possible next.'][i]}</p></div>`).join('')}</div><button class="button dark" data-action="signup">Let’s find your path <span>↗</span></button></section>${courseTeaser()}</main>${footer()}`;
 }
 function auth(mode = 'signup') {
   currentView = mode;
@@ -99,12 +103,6 @@ function questionnaire() {
     ], { duration: 780, easing: 'cubic-bezier(.2,.82,.2,1)' });
   }
 }
-const modules = {
-  Starter: ['Hello, artificial intelligence', 'AI in your everyday world', 'Your first conversation with AI'],
-  Beginner: ['A closer look at generative AI', 'The art of a good prompt', 'Using AI thoughtfully'],
-  Medium: ['From simple prompts to workflows', 'Understanding how models learn', 'Checking facts, bias, and limitations'],
-  Expert: ['Inside modern language models', 'Building with models and APIs', 'Evaluating responsible AI systems']
-};
 function courseTeaser() {
   return `<section class="course-teaser"><div><div class="eyebrow">START LEARNING TODAY</div><h2>Three small steps into AI.</h2><p>Learn how AI works, practice better prompts, and use it responsibly at school.</p></div><button class="button purple" data-action="course">Explore free lessons <span>→</span></button></section>`;
 }
@@ -113,17 +111,53 @@ function courseHub() {
   const count = completedModules.length;
   app.innerHTML = `${header()}<main class="course-page"><section class="course-hero"><div class="eyebrow">YOUR AI LEARNING QUEST</div><h1>Small lessons. <em>Big ideas.</em></h1><p>Made for curious high school students. You can start here without an account.</p><div class="course-progress" role="progressbar" aria-label="Lessons completed" aria-valuemin="0" aria-valuemax="3" aria-valuenow="${count}"><div><span>YOUR PROGRESS</span><strong>${count} of 3 lessons complete</strong></div><div class="course-progress-track"><span style="width:${count / 3 * 100}%"></span></div></div><div class="badge-row" aria-label="Achievement badges">${courseModules.map(module => `<span class="course-badge ${completedModules.includes(module.id) ? 'earned' : ''}" title="${completedModules.includes(module.id) ? 'Earned' : 'Complete the lesson to earn'} ${module.badge}"><span aria-hidden="true">${module.icon}</span>${module.badge}${completedModules.includes(module.id) ? ' ✓' : ''}</span>`).join('')}</div></section><section class="course-grid" aria-label="Learning modules">${courseModules.map(module => `<article class="course-module"><div class="module-meta"><span>${module.category}</span><span>${module.time}</span></div><div class="module-symbol" aria-hidden="true">${module.icon}</div><h2>${module.title}</h2><p>${module.summary}</p><button class="button ${completedModules.includes(module.id) ? 'outline' : 'purple'}" data-module="${module.id}">${completedModules.includes(module.id) ? 'Review lesson' : 'Start lesson'} <span>→</span></button><small>${completedModules.includes(module.id) ? '✓ Completed' : `Lesson ${module.number} of 03`}</small></article>`).join('')}</section><p class="course-save-note">✧ Your lesson progress is saved in this browser.</p></main>${footer()}`;
 }
+function renderLesson(module, personal = false) {
+  currentView = personal ? 'personal-lesson' : 'course-lesson';
+  activeLesson = module;
+  activeLessonIsPersonal = personal;
+  selectedQuizAnswer = null;
+  const backAction = personal ? 'dashboard' : 'course';
+  app.innerHTML = `${header(true)}<main class="course-page lesson-page"><button class="back-link" data-action="${backAction}">← ${personal ? 'My learning path' : 'All lessons'}</button><div class="lesson-heading"><div class="eyebrow">${escape(module.category)} · LESSON ${escape(module.number)}</div><h1>${escape(module.title)}</h1><p>${escape(module.summary)}</p>${personal ? '<p class="ai-lesson-note">✧ Made with AI for your answers. Check important facts with the linked source and your teacher.</p>' : ''}</div><div class="lesson-body"><div class="lesson-copy">${module.sections.map((section, index) => `<section><span class="lesson-step">0${index + 1}</span><h2>${escape(section.title)}</h2><p>${escape(section.text)}</p></section>`).join('')}<div class="try-it"><strong>✧ Your turn</strong><p>${escape(module.task)}</p></div>${!personal && module.id === 'tools' ? '<div class="prompt-lab"><h2>Build a practice prompt</h2><p>Nothing you type here is sent to an AI service.</p><label>My topic<input data-prompt-field="topic" placeholder="e.g. photosynthesis" maxlength="80"></label><label>What I want to practice<input data-prompt-field="task" placeholder="e.g. a short quiz" maxlength="80"></label><label>My grade<input data-prompt-field="grade" placeholder="e.g. 10" maxlength="20"></label><div class="prompt-preview" role="status" aria-live="polite">Your prompt will appear here as you type.</div></div>' : ''}<p class="lesson-source">Learn more: <a href="${module.source}" target="_blank" rel="noopener noreferrer">Original source ↗</a> · <a href="/references.html">All sources ↗</a></p></div><aside class="lesson-check"><div class="eyebrow">CHECK YOUR UNDERSTANDING</div><h2>${escape(module.question)}</h2><div class="quiz-options" role="radiogroup" aria-label="Knowledge check">${module.choices.map((choice, index) => `<button type="button" class="quiz-choice" role="radio" aria-checked="false" data-quiz-choice="${index}"><span>${String.fromCharCode(65 + index)}</span>${escape(choice)}</button>`).join('')}</div><p id="quiz-feedback" role="status" aria-live="polite">Choose an answer to complete this lesson.</p><button class="button purple full" data-action="complete-module" disabled>${personal ? 'Complete lesson' : `Earn ${escape(module.badge)} badge`} <span>✧</span></button></aside></div></main>${footer()}`;
+}
 function courseLesson(id) {
   const module = courseModules.find(item => item.id === id);
   if (!module) return courseHub();
-  currentView = 'course-lesson'; activeModule = id; selectedQuizAnswer = null;
-  app.innerHTML = `${header(true)}<main class="course-page lesson-page"><button class="back-link" data-action="course">← All lessons</button><div class="lesson-heading"><div class="eyebrow">${module.category} · LESSON ${module.number}</div><h1>${module.title}</h1><p>${module.summary}</p></div><div class="lesson-body"><div class="lesson-copy">${module.sections.map((section, index) => `<section><span class="lesson-step">0${index + 1}</span><h2>${section.title}</h2><p>${section.text}</p></section>`).join('')}<div class="try-it"><strong>✧ Your turn</strong><p>${module.task}</p></div>${id === 'tools' ? '<div class="prompt-lab"><h2>Build a practice prompt</h2><p>Nothing you type here is sent to an AI service.</p><label>My topic<input data-prompt-field="topic" placeholder="e.g. photosynthesis" maxlength="80"></label><label>What I want to practice<input data-prompt-field="task" placeholder="e.g. a short quiz" maxlength="80"></label><label>My grade<input data-prompt-field="grade" placeholder="e.g. 10" maxlength="20"></label><div class="prompt-preview" role="status" aria-live="polite">Your prompt will appear here as you type.</div></div>' : ''}<p class="lesson-source">Learn more: <a href="${module.source}" target="_blank" rel="noopener noreferrer">Original source ↗</a> · <a href="/references.html">All sources ↗</a></p></div><aside class="lesson-check"><div class="eyebrow">CHECK YOUR UNDERSTANDING</div><h2>${module.question}</h2><div class="quiz-options" role="radiogroup" aria-label="Knowledge check">${module.choices.map((choice, index) => `<button type="button" class="quiz-choice" role="radio" aria-checked="false" data-quiz-choice="${index}"><span>${String.fromCharCode(65 + index)}</span>${choice}</button>`).join('')}</div><p id="quiz-feedback" role="status" aria-live="polite">Choose an answer to unlock your badge.</p><button class="button purple full" data-action="complete-module" disabled>Earn ${module.badge} <span>✧</span></button></aside></div></main>${footer()}`;
+  renderLesson(module);
+}
+function personalKey(level, index) { return `${level}:${index}`; }
+function personalProgressKey() { return `fairylearn-personal-progress:${session?.user?.id || 'guest'}`; }
+function loadPersonalProgress() {
+  const valid = new Set(levels.flatMap(level => pathLessons[level].map((_, index) => personalKey(level, index))));
+  const stored = read(personalProgressKey());
+  completedPersonalLessons = Array.isArray(stored) ? [...new Set(stored.filter(key => valid.has(key)))] : [];
+}
+async function openPersonalLesson(level, index) {
+  const topic = findPathLesson(level, index);
+  if (!topic) return;
+  if (!session) { toast('Create an account and finish your questions to unlock personal lessons.'); return; }
+  if (!config.aiLessonsEnabled) { toast('Personal lessons need an OpenAI key on the server.'); return; }
+  const key = personalKey(level, index);
+  if (personalLessons[key]) { renderLesson(personalLessons[key], true); window.scrollTo(0, 0); return; }
+  busy = true;
+  const stopLoading = startLoading('Your fairy is writing a lesson just for you…');
+  try {
+    await ensureSession();
+    const response = await fetch('/api/lesson', { method: 'POST', signal: AbortSignal.timeout(40000), headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ level, index }) });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'The lesson could not be created right now.');
+    const lesson = result.lesson;
+    if (!lesson || !Array.isArray(lesson.sections) || lesson.sections.length !== 3 || !Array.isArray(lesson.choices) || lesson.choices.length !== 3) throw new Error('The lesson was incomplete. Please try again.');
+    personalLessons[key] = { ...lesson, id: key, title: topic.title, source: topic.source, category: `${level.toUpperCase()} · PERSONAL AI LESSON`, number: `0${index + 1}` };
+    renderLesson(personalLessons[key], true);
+    window.scrollTo(0, 0);
+  } catch (error) { toast(error.message); }
+  finally { busy = false; stopLoading(); }
 }
 function dashboard() {
   currentView = 'dashboard';
   const assigned = getLevel(answers);
   selectedLevel ||= assigned;
-  app.innerHTML = `${header()}<main class="dashboard"><div class="dashboard-greeting"><div><div class="eyebrow">YOUR NEXT CHAPTER</div><h1>A little curiosity.<br><em>A path of your own.</em></h1><p>${name ? `Welcome, ${escape(name)}. ` : ''}Here’s where your AI adventure begins.</p></div><div class="path-badge"><span>✧</span><small>YOUR STARTING POINT</small><strong>${assigned}</strong></div></div>${!session ? '<div class="preview-notice"><span>✧ You’re exploring a preview. Your answers are saved in this browser.</span><button class="inline-button" data-action="signup">Create an account →</button></div>' : ''}<section class="personal-plan"><span class="plan-icon">✳</span><div><div class="eyebrow">A LITTLE PLAN, JUST FOR YOU</div><p>${escape(description || planDescription(answers))}</p><div class="plan-tags"><span>◷ ${answers.pace === '30' ? '30+' : answers.pace} min / day</span><span>◇ ${({ visual: 'Visual learning', practical: 'Hands-on learning', guided: 'Step by step', mixed: 'A little of everything' })[answers.format]}</span></div></div><button class="back-link" data-action="retake">Edit my answers ↗</button></section>${courseTeaser()}<div class="curriculum-heading"><div><h2>Your learning path</h2><p>Explore every level, starting wherever feels right.</p></div><span class="coming-pill">✧ MORE LESSONS ARE ON THEIR WAY</span></div><div class="level-tabs" role="tablist" aria-label="Learning levels">${levels.map((level, i) => `<button role="tab" id="tab-${level}" aria-controls="lesson-panel" aria-selected="${selectedLevel === level}" data-level="${level}" class="${selectedLevel === level ? 'active' : ''}"><span>0${i + 1}</span>${level}${level === assigned ? '<small>YOUR MATCH</small>' : ''}</button>`).join('')}</div><section id="lesson-panel" role="tabpanel" aria-labelledby="tab-${selectedLevel}" class="lessons">${modules[selectedLevel].map((title, i) => `<article class="lesson"><div class="lesson-art art-${i}"><span>${['✧', '⌁', '✳'][i]}</span><small>0${i + 1}</small></div><div class="lesson-content"><div class="eyebrow">${selectedLevel.toUpperCase()} · LESSON 0${i + 1}</div><h3>${title}</h3><p>A new little discovery is coming soon.</p><div class="lesson-buttons"><button disabled title="Slideshows are coming soon">▤ Slideshow <span>⌑</span></button><button disabled title="Lessons are coming soon">▷ Lesson <span>⌑</span></button></div></div></article>`).join('')}</section><section class="tutor-banner"><span class="tutor-icon">✳</span><div><h3>A little help, whenever you need it.</h3><p>Your personal AI learning companion is coming soon.</p></div><span class="coming-pill">AI GUIDE · COMING SOON</span></section></main>${footer()}`;
+  app.innerHTML = `${header()}<main class="dashboard"><div class="dashboard-greeting"><div><div class="eyebrow">YOUR NEXT CHAPTER</div><h1>A little curiosity.<br><em>A path of your own.</em></h1><p>${name ? `Welcome, ${escape(name)}. ` : ''}Here’s where your AI adventure begins.</p></div><div class="path-badge"><span>✧</span><small>YOUR STARTING POINT</small><strong>${assigned}</strong></div></div>${!session ? '<div class="preview-notice"><span>✧ You’re exploring a preview. Your answers are saved in this browser.</span><button class="inline-button" data-action="signup">Create an account →</button></div>' : ''}<section class="personal-plan"><span class="plan-icon">✳</span><div><div class="eyebrow">A LITTLE PLAN, JUST FOR YOU</div><p>${escape(description || planDescription(answers))}</p><div class="plan-tags"><span>◷ ${answers.pace === '30' ? '30+' : answers.pace} min / day</span><span>◇ ${({ visual: 'Visual learning', practical: 'Hands-on learning', guided: 'Step by step', mixed: 'A little of everything' })[answers.format]}</span></div></div><button class="back-link" data-action="retake">Edit my answers ↗</button></section>${courseTeaser()}<div class="curriculum-heading"><div><h2>Your learning path</h2><p>${session ? "Choose a level. GPT builds each lesson around your answers." : "Create an account to unlock lessons made for you."}</p></div><span class="coming-pill">✧ ${session ? "PERSONAL AI LESSONS" : "SIGN IN TO UNLOCK"}</span></div><div class="level-tabs" role="tablist" aria-label="Learning levels">${levels.map((level, i) => `<button role="tab" id="tab-${level}" aria-controls="lesson-panel" aria-selected="${selectedLevel === level}" data-level="${level}" class="${selectedLevel === level ? 'active' : ''}"><span>0${i + 1}</span>${level}${level === assigned ? '<small>YOUR MATCH</small>' : ''}</button>`).join('')}</div><section id="lesson-panel" role="tabpanel" aria-labelledby="tab-${selectedLevel}" class="lessons">${pathLessons[selectedLevel].map((item, i) => { const done = completedPersonalLessons.includes(personalKey(selectedLevel, i)); return `<article class="lesson"><div class="lesson-art art-${i}"><span>${['✧', '⌁', '✳'][i]}</span><small>0${i + 1}</small></div><div class="lesson-content"><div class="eyebrow">${selectedLevel.toUpperCase()} · LESSON 0${i + 1}</div><h3>${item.title}</h3><p>${done ? '✓ Lesson complete. Revisit it any time.' : session ? 'A lesson made for your goal, style, and pace.' : 'Create an account to make this lesson yours.'}</p><div class="lesson-buttons"><button disabled title="Slideshows are coming soon">▤ Slideshow <span>⌑</span></button>${session ? `<button data-personal-lesson="${i}" ${config.aiLessonsEnabled ? '' : 'disabled title="Add OPENAI_API_KEY on the server"'}>▷ ${done ? 'Review lesson' : 'Make my lesson'} <span>↗</span></button>` : '<button data-action="signup">▷ Create account <span>↗</span></button>'}</div></div></article>`; }).join('')}</section><section class="tutor-banner"><span class="tutor-icon">✳</span><div><h3>A little help, whenever you need it.</h3><p>Your personal AI learning companion is coming soon.</p></div><span class="coming-pill">AI GUIDE · COMING SOON</span></section></main>${footer()}`;
 }
 async function supabase(path, { method = 'GET', body, token = session?.access_token, headers = {} } = {}) {
   const res = await fetch(config.supabaseUrl + path, { method, signal: AbortSignal.timeout(15000), headers: { apikey: config.supabaseAnonKey, 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}), ...headers }, ...(body ? { body: JSON.stringify(body) } : {}) });
@@ -144,9 +178,10 @@ function store(key, value) { try { localStorage.setItem(key, JSON.stringify(valu
 function read(key) { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
 async function loadAccount() {
   await ensureSession();
+  personalLessons = {};
   name = session.user?.user_metadata?.name || '';
   const rows = await supabase(`/rest/v1/learning_profiles?user_id=eq.${encodeURIComponent(session.user.id)}&select=answers,description`);
-  if (validAnswers(rows?.[0]?.answers)) { answers = rows[0].answers; description = rows[0].description; selectedLevel = null; dashboard(); }
+  if (validAnswers(rows?.[0]?.answers)) { answers = rows[0].answers; description = rows[0].description; selectedLevel = null; loadPersonalProgress(); dashboard(); }
   else { answers = {}; step = 0; questionnaire(); }
 }
 async function finish() {
@@ -163,16 +198,18 @@ async function finish() {
       description = (await res.json()).description;
       await supabase('/rest/v1/learning_profiles?on_conflict=user_id', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: { user_id: session.user.id, answers, level: getLevel(answers), description, updated_at: new Date().toISOString() } });
     } else store('fairylearn-preview', { answers, description });
-    selectedLevel = null; dashboard(); window.scrollTo(0, 0);
+    selectedLevel = null; personalLessons = {}; if (session) loadPersonalProgress(); dashboard(); window.scrollTo(0, 0);
   } catch (error) { toast(error.message); questionnaire(); }
   finally { busy = false; stopLoading(); }
 }
 app.addEventListener('click', async event => {
+  const personalButton = event.target.closest('[data-personal-lesson]');
+  if (personalButton) { if (!busy) await openPersonalLesson(selectedLevel, Number(personalButton.dataset.personalLesson)); return; }
   const moduleButton = event.target.closest('[data-module]');
-  if (moduleButton) { courseLesson(moduleButton.dataset.module); window.scrollTo(0, 0); return; }
+  if (moduleButton) { if (busy) return; courseLesson(moduleButton.dataset.module); window.scrollTo(0, 0); return; }
   const quizChoice = event.target.closest('[data-quiz-choice]');
-  if (quizChoice && activeModule) {
-    const module = courseModules.find(item => item.id === activeModule);
+  if (quizChoice && activeLesson) {
+    const module = activeLesson;
     selectedQuizAnswer = Number(quizChoice.dataset.quizChoice);
     app.querySelectorAll('[data-quiz-choice]').forEach(button => {
       const selected = button === quizChoice;
@@ -197,7 +234,7 @@ app.addEventListener('click', async event => {
     return;
   }
   const level = event.target.closest('[data-level]');
-  if (level) { selectedLevel = level.dataset.level; dashboard(); document.querySelector(`#tab-${selectedLevel}`).focus({ preventScroll: true }); return; }
+  if (level) { if (busy) return; selectedLevel = level.dataset.level; dashboard(); document.querySelector(`#tab-${selectedLevel}`).focus({ preventScroll: true }); return; }
   const action = event.target.closest('[data-action]')?.dataset.action;
   if (!action) return;
   event.preventDefault();
@@ -208,13 +245,20 @@ app.addEventListener('click', async event => {
   if (action === 'how' || action === 'paths') { home(); document.querySelector(action === 'how' ? '#how-it-works' : '#paths').scrollIntoView(); return; }
   if (action === 'home') home();
   if (action === 'course') courseHub();
-  if (action === 'complete-module' && activeModule) {
-    const module = courseModules.find(item => item.id === activeModule);
+  if (action === 'complete-module' && activeLesson) {
+    const module = activeLesson;
     if (selectedQuizAnswer !== module?.answer) return;
-    completedModules = completedCourseIds([...completedModules, activeModule]);
-    store('fairylearn-course-progress', completedModules);
-    courseHub();
-    toast(`You earned the ${module.badge} badge!`);
+    if (activeLessonIsPersonal) {
+      completedPersonalLessons = [...new Set([...completedPersonalLessons, module.id])];
+      store(personalProgressKey(), completedPersonalLessons);
+      dashboard();
+      toast('Your personal lesson is complete!');
+    } else {
+      completedModules = completedCourseIds([...completedModules, module.id]);
+      store('fairylearn-course-progress', completedModules);
+      courseHub();
+      toast(`You earned the ${module.badge} badge!`);
+    }
   }
   if (action === 'signup' || action === 'login') auth(action);
   if (action === 'demo') { const saved = read('fairylearn-preview'); answers = saved?.answers || {}; step = 0; questionnaire(); }
@@ -222,7 +266,7 @@ app.addEventListener('click', async event => {
   if (action === 'retake') { step = 0; questionnaire(); }
   if (action === 'previous') { if (step) { step--; questionnaire(); document.querySelector('#question-title').focus({ preventScroll: true }); } else { home(); window.scrollTo(0, 0); } }
   if (action === 'next' && answers[questions[step].id]) { if (step < 4) { step++; questionnaire(); document.querySelector('#question-title').focus({ preventScroll: true }); } else await finish(); }
-  if (action === 'logout') { const token = session?.access_token; session = null; sessionStorage.removeItem('fairylearn-session'); answers = {}; name = ''; home(); if (token) supabase('/auth/v1/logout', { method: 'POST', token }).catch(() => {}); }
+  if (action === 'logout') { const token = session?.access_token; session = null; sessionStorage.removeItem('fairylearn-session'); answers = {}; name = ''; personalLessons = {}; completedPersonalLessons = []; home(); if (token) supabase('/auth/v1/logout', { method: 'POST', token }).catch(() => {}); }
   if (action !== 'next' && action !== 'previous') window.scrollTo(0, 0);
 });
 app.addEventListener('input', event => {

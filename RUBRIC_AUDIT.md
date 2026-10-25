@@ -4,7 +4,7 @@ This checklist compares the site with the rubric screenshots supplied by the tea
 
 | Requirement | Status | Evidence or next action |
 | --- | --- | --- |
-| AI learning portal for grades 9–12 | Implemented | The public course hub and lesson language directly address high school students. |
+| AI learning portal for grades 9–12 | Implemented | The public course hub and lesson language directly address high school students. Signed-in learners can generate level-specific lessons from their saved answers. |
 | Fundamentals of AI | Implemented | “How does AI learn?” explains AI, machine learning, training data, generative AI, and limitations. |
 | Practical AI tools and techniques | Implemented | “Ask better questions” teaches prompting, revision, and verification, with a local prompt builder. |
 | Ethical AI use in school | Implemented | “Use AI with care” covers privacy, fact checking, bias, credit, and school rules. |

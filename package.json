@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": { "dev": "node --env-file-if-exists=.env server.mjs", "start": "node --env-file-if-exists=.env server.mjs", "test": "node --test" },
+  "scripts": { "dev": "node --env-file-if-exists=.env --env-file-if-exists=.env.local server.mjs", "start": "node --env-file-if-exists=.env --env-file-if-exists=.env.local server.mjs", "test": "node --test" },
   "engines": { "node": ">=22" }
 }

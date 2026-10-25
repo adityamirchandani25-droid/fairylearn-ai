@@ -1,6 +1,6 @@
 # Fairylearn AI
 
-A responsive AI learning portal for grades 9–12: landing page, three public learning modules, quiz-locked badges and progress tracking, optional Supabase signup/login, a five-question assessment, and personalized Starter, Beginner, Medium, and Expert paths. Additional level-specific lessons, slideshows, and the AI tutor are marked as coming soon.
+A responsive AI learning portal for grades 9–12: landing page, three public learning modules, quiz-locked badges and progress tracking, Supabase signup/login, a five-question assessment, and GPT-generated Starter, Beginner, Medium, and Expert lessons. Slideshows and the AI tutor are marked as coming soon.
 
 ## Run locally
 
@@ -22,15 +22,17 @@ Open http://localhost:3000. Without keys, **Explore without an account** runs th
 
 Sessions are stored in sessionStorage; preview answers are stored in localStorage. The app clears local session state on logout. The assessment uses experience and a knowledge check to select an initial level; all four paths remain browsable.
 
-## Optional OpenAI personalization
+## OpenAI personalization and lessons
 
-Add `OPENAI_API_KEY` to `.env` and optionally set `OPENAI_MODEL` (default `gpt-4.1-mini`). The key stays on the Node server. On completion, `/api/personalize` verifies the Supabase user, validates the answers, and asks OpenAI for a short introduction based on goal, learning style, level, and pace. A local introduction is used if the key is absent or OpenAI is unavailable. Preview mode uses the local introduction. No chat tutor or lesson generation is implemented yet.
+Add `OPENAI_API_KEY` to `.env.local` (or `.env`) and optionally set `OPENAI_MODEL` (default `gpt-4.1-mini`). `npm run dev` and `npm start` load both files, with `.env.local` taking precedence. The key stays on the Node server. On completion, `/api/personalize` verifies the Supabase user, validates the answers, and asks OpenAI for a short introduction based on goal, learning style, level, and pace. A local introduction is used if OpenAI is unavailable. Preview mode uses the local introduction.
+
+Signed-in learners who have finished the five questions can open an AI lesson from any of the four level tabs on **My path**. `/api/lesson` verifies their Supabase session, reads their stored profile, and asks GPT for a structured lesson on the selected approved topic. It returns three explanations, a practice task, and a checked three-choice quiz. The UI escapes the returned text before rendering it. Lesson completion is saved in that learner's browser storage; generated lesson content is cached on the server for 24 hours or until restart. The endpoint permits up to 12 new generations per user per hour. Public introductory lessons remain available without login or an API key.
 
 The Node server binds to loopback for local development. For a public host, set `HOST=0.0.0.0` and use the host-assigned `PORT`. Deployment needs the Node server as well as `public/`, since the server provides configuration and secure personalization. Submit the public site's home URL, not a GitHub repository URL; judges must be able to open the home page and lessons without logging in.
 
 ## Public lessons and competition references
 
-The **Explore lessons** entry leads to three usable modules: AI fundamentals, practical prompting, and ethical AI use. Each has original explanatory content, a practice task, and a knowledge check. A correct answer earns a badge; the course hub shows completion and a progress bar. Progress is stored in this browser and can be used without an account. The prompt builder in the tools module runs locally and does not send its text to an AI service.
+The **Explore lessons** entry leads to three usable public modules: AI fundamentals, practical prompting, and ethical AI use. Each has original explanatory content, a practice task, and a knowledge check. A correct answer earns a badge; the course hub shows completion and a progress bar. Progress is stored in this browser and can be used without an account. The prompt builder in the tools module runs locally and does not send its text to an AI service. The four learning-path tabs provide additional GPT-generated lessons for signed-in learners.
 
 The public `/references.html` page credits content sources, fonts, services, graphics, and AI assistance. It also documents the site's stack; there is no front-end framework or CMS. See `RUBRIC_AUDIT.md` for what is implemented and what still needs student-supplied documents or a live deployment.
 
