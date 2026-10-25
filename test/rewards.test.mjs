@@ -1,0 +1,100 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { restoreWallet, awardCompletion, awardQuiz, trophyBalance, earnedTrophies, buyItem, consumeItem, toggleItem, itemCount, quizTrophyTier, MAX_TROPHIES, shopItems } from '../public/rewards.mjs';
+import { createQuiz, selectChoice, checkAnswer, showHint, protectRetry, nextQuestion, quizScore } from '../public/quiz.mjs';
+const fresh = () => restoreWallet(null);
+const id = n => `ai:00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
+const funded = () => Array.from({ length: 80 }, (_, n) => id(n)).reduce((wallet, key) => awardQuiz(awardCompletion(wallet, key).wallet, key, 5, 5).wallet, fresh());
+const item = { question: 'What makes a useful prompt?', choices: ['Clear context', 'No context', 'Private data'], answer: 0, hint: 'Think about what the tool needs.', explanation: 'Context explains the task.' };
+const fixedQuiz = () => createQuiz([item, item, item], () => 0.999);
+
+test('quiz rewards use exact 80% and 95% boundaries, and 95% pays five total', () => {
+  for (const [score, total, tier] of [[79,100,0],[80,100,3],[94,100,3],[95,100,5],[19,20,5],[4,5,3],[5,5,5],[3,4,0]]) assert.equal(quizTrophyTier(score,total),tier);
+  assert.equal(quizTrophyTier(Infinity,5),0);
+  let reward = awardQuiz(fresh(),'foundations',4,5);
+  assert.equal(reward.earned,3);
+  assert.equal(awardQuiz(reward.wallet,'foundations',4,5).earned,0);
+  reward = awardQuiz(reward.wallet,'foundations',5,5);
+  assert.equal(reward.earned,2);
+  assert.equal(earnedTrophies(reward.wallet),5);
+  assert.equal(awardQuiz(reward.wallet,'foundations',5,5).earned,0);
+});
+test('a lesson earns one separate trophy, while standalone quizzes do not complete lessons', () => {
+  let wallet = awardQuiz(fresh(),'foundations',5,5).wallet;
+  assert.equal(trophyBalance(wallet),5);
+  const reward = awardCompletion(wallet,'foundations');
+  assert.equal(reward.earned,1);
+  assert.equal(trophyBalance(reward.wallet),6);
+  assert.equal(awardCompletion(reward.wallet,'foundations').earned,0);
+  assert.equal(awardCompletion(wallet,'unit-test').earned,0);
+  assert.equal(awardQuiz(wallet,'unit-test',8,10).earned,3);
+  assert.equal(awardQuiz(wallet,'not-real',5,5).earned,0);
+});
+test('400 is a lifetime cap that spending cannot refill', () => {
+  let wallet = funded();
+  assert.equal(earnedTrophies(wallet),MAX_TROPHIES);
+  wallet = buyItem(wallet,'scholar-crown').wallet;
+  assert.equal(trophyBalance(wallet),200);
+  assert.equal(awardQuiz(wallet,id(900),5,5).earned,0);
+  wallet = awardCompletion(wallet,id(900)).wallet;
+  assert.equal(earnedTrophies(wallet),400);
+  assert.equal(trophyBalance(wallet),200);
+  assert.equal(Math.max(...shopItems.map(item=>item.cost)),200);
+  assert.ok(shopItems.length >= 12);
+});
+test('purchases and consumptions persist and cannot create negative funds or stock', () => {
+  let wallet = awardQuiz(fresh(),'foundations',5,5).wallet;
+  assert.match(buyItem(fresh(),'hint-pass').error,/5 more/);
+  wallet = buyItem(wallet,'hint-pass').wallet;
+  assert.equal(trophyBalance(wallet),0);
+  assert.equal(itemCount(wallet,'hint-pass'),1);
+  wallet = consumeItem(wallet,'hint-pass').wallet;
+  assert.equal(itemCount(wallet,'hint-pass'),0);
+  assert.ok(consumeItem(wallet,'hint-pass').error);
+  assert.ok(buyItem(wallet,'unknown').error);
+  const restored = restoreWallet(JSON.parse(JSON.stringify(wallet)));
+  assert.equal(trophyBalance(restored),0);
+  assert.equal(itemCount(restored,'hint-pass'),0);
+});
+test('permanent items cannot be bought twice and conflicting styles equip exclusively', () => {
+  let wallet = buyItem(funded(),'focus-lens').wallet;
+  const balance = trophyBalance(wallet);
+  assert.ok(buyItem(wallet,'focus-lens').error);
+  wallet = toggleItem(wallet,'focus-lens');
+  assert.equal(wallet.equipped['focus-lens'],true);
+  assert.equal(trophyBalance(wallet),balance);
+  assert.ok(consumeItem(wallet,'focus-lens').error);
+  wallet = buyItem(buyItem(wallet,'ocean-theme').wallet,'sage-theme').wallet;
+  wallet = toggleItem(toggleItem(wallet,'ocean-theme'),'sage-theme');
+  assert.equal(wallet.equipped['sage-theme'],true);
+  assert.equal(wallet.equipped['ocean-theme'],false);
+});
+test('migration recalculates old trophy awards and retains previously purchased perks', () => {
+  const wallet = restoreWallet({ claims:['foundations:complete','foundations:perfect'], purchases:{'hint-pass':2,'focus-lens':1},used:{'hint-pass':1},equipped:{'focus-lens':true} });
+  assert.equal(earnedTrophies(wallet),6);
+  assert.equal(trophyBalance(wallet),6);
+  assert.equal(itemCount(wallet,'hint-pass'),1);
+  assert.equal(wallet.equipped['focus-lens'],true);
+  assert.deepEqual(restoreWallet(wallet),wallet);
+});
+test('invalid current saves cannot overspend or invent reward sources', () => {
+  const wallet = restoreWallet({version:2,claims:['foundations:complete','foundations:complete','fake'],purchases:{'hint-pass':900},used:{'hint-pass':-1}});
+  assert.equal(earnedTrophies(wallet),1);
+  assert.equal(trophyBalance(wallet),1);
+  assert.equal(itemCount(wallet,'hint-pass'),0);
+});
+test('Hint Pass and Retry Charm protect only the current question', () => {
+  let quiz = checkAnswer(selectChoice(showHint(fixedQuiz(),true),0));
+  assert.equal(quizScore(quiz),1);
+  quiz = nextQuestion(quiz);
+  assert.equal(quiz.protectedHint,false);
+  quiz = protectRetry(checkAnswer(selectChoice(quiz,1)));
+  quiz = checkAnswer(selectChoice(quiz,0));
+  assert.equal(quizScore(quiz),2);
+  quiz = nextQuestion(quiz);
+  assert.equal(quiz.protectedRetry,false);
+  quiz = protectRetry(checkAnswer(selectChoice(quiz,1)));
+  quiz = checkAnswer(selectChoice(quiz,2));
+  quiz = checkAnswer(selectChoice(quiz,0));
+  assert.equal(quizScore(quiz),2);
+});

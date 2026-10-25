@@ -12,11 +12,15 @@ const lesson = {
     { title: 'Third idea', text: 'An AI answer can sound confident and still be wrong. Check important claims with a reliable source, and follow your teacher’s rules for using AI in class.' }
   ],
   task: 'Write one clear prompt for a creative project, then check whether the response follows your instructions.',
-  question: 'What should you do after an AI tool gives you a surprising factual claim?',
-  choices: ['Check the claim with a reliable source.', 'Accept it because it sounds confident.', 'Ask it to repeat the claim loudly.'],
-  answer: 0,
-  feedback: 'Checking a reliable source is the best way to test an AI-generated factual claim.'
+  quiz: [
+    { question: 'What should you do after an AI tool gives you a surprising factual claim?', choices: ['Check the claim with a reliable source.', 'Accept it because it sounds confident.', 'Ask it to repeat the claim loudly.', 'Share it right away.'], answer: 0, hint: 'Is sounding confident the same as being right?', explanation: 'Checking a reliable source is the best way to test an AI-generated factual claim.' },
+    { question: 'Which prompt gives an AI tool the most useful context?', choices: ['Help.', 'Write a poem.', 'Write a four-line poem about autumn for my grade 9 class.', 'Do something creative.'], answer: 2, hint: 'Look for a task, an audience, and a format.', explanation: 'It names the task, the audience, and the format.' },
+    { question: 'What is a good way to improve a vague AI response?', choices: ['Ask a follow-up for a concrete example.', 'Give up.', 'Copy it anyway.', 'Type the prompt in capitals.'], answer: 0, hint: 'Review, then revise.', explanation: 'A focused follow-up prompt often improves the result.' },
+    { question: 'Why should you follow your teacher’s rules about AI?', choices: ['They keep your work honest and fair.', 'AI is always banned.', 'Rules never apply to AI.', 'It makes the AI faster.'], answer: 0, hint: 'Think about honesty in schoolwork.', explanation: 'School rules help you use AI honestly and fairly.' }
+  ]
 };
+
+lesson.quiz.push({ question: 'What information should you keep out of practice prompts?', choices: ['Private details about real people.', 'Fictional examples.', 'The task you want help with.', 'A requested format.'], answer: 0, hint: 'Practice can use made-up examples.', explanation: 'Avoid sharing private information when using AI tools.' });
 
 test('lesson generation sends a structured, private request based on approved profile choices', async () => {
   let request;
@@ -32,14 +36,22 @@ test('lesson generation sends a structured, private request based on approved pr
   assert.equal(body.text.format.type, 'json_schema');
   assert.equal(body.text.format.strict, true);
   assert.match(body.input, /Bring my ideas to life/);
-  assert.equal(result.answer, 0);
+  assert.equal(result.quiz.length, 5);
+  assert.match(body.instructions, /exactly five multiple-choice questions/);
+  assert.equal(body.text.format.schema.properties.quiz.items.required.includes('hint'), true);
   assert.equal(result.sections.length, 3);
 });
 
 test('malformed AI lessons cannot unlock an incorrect quiz', () => {
-  assert.throws(() => validateGeneratedLesson({ ...lesson, answer: 4 }), /incomplete lesson/);
   assert.throws(() => validateGeneratedLesson({ ...lesson, sections: [] }), /incomplete lesson/);
-  assert.throws(() => validateGeneratedLesson({ ...lesson, choices: ['Same answer', 'Same answer', 'Same answer'] }), /incomplete lesson/);
+  assert.throws(() => validateGeneratedLesson({ ...lesson, quiz: lesson.quiz.slice(0, 2) }), /incomplete lesson/);
+  assert.throws(() => validateGeneratedLesson({ ...lesson, quiz: lesson.quiz.map(item => ({ ...item, answer: 7 })) }), /incomplete lesson/);
+});
+
+test('one malformed quiz question is dropped instead of failing the whole lesson', () => {
+  const result = validateGeneratedLesson({ ...lesson, quiz: [...lesson.quiz, { ...lesson.quiz[0], choices: ['Same', 'Same', 'Same'] }] });
+  assert.equal(result.quiz.length, 5);
+  assert.equal(validateGeneratedLesson({ ...lesson, quiz: [...lesson.quiz, ...lesson.quiz] }).quiz.length, 5);
 });
 
 test('lesson requests can only select approved level topics', () => {
