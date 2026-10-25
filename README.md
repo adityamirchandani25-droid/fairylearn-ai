@@ -1,6 +1,6 @@
 # Fairylearn AI
 
-A responsive AI learning onboarding app: landing page, Supabase signup/login, five-question learning assessment, and personalized Starter, Beginner, Medium, and Expert paths. Slideshows, lessons, and the AI tutor are clearly marked as coming soon.
+A responsive AI learning portal for grades 9–12: landing page, three public learning modules, quiz-locked badges and progress tracking, optional Supabase signup/login, a five-question assessment, and personalized Starter, Beginner, Medium, and Expert paths. Additional level-specific lessons, slideshows, and the AI tutor are marked as coming soon.
 
 ## Run locally
 
@@ -26,7 +26,13 @@ Sessions are stored in sessionStorage; preview answers are stored in localStorag
 
 Add `OPENAI_API_KEY` to `.env` and optionally set `OPENAI_MODEL` (default `gpt-4.1-mini`). The key stays on the Node server. On completion, `/api/personalize` verifies the Supabase user, validates the answers, and asks OpenAI for a short introduction based on goal, learning style, level, and pace. A local introduction is used if the key is absent or OpenAI is unavailable. Preview mode uses the local introduction. No chat tutor or lesson generation is implemented yet.
 
-The Node server binds to loopback for local development. Deployment needs the Node server as well as `public/`, since the server provides configuration and secure personalization.
+The Node server binds to loopback for local development. For a public host, set `HOST=0.0.0.0` and use the host-assigned `PORT`. Deployment needs the Node server as well as `public/`, since the server provides configuration and secure personalization. Submit the public site's home URL, not a GitHub repository URL; judges must be able to open the home page and lessons without logging in.
+
+## Public lessons and competition references
+
+The **Explore lessons** entry leads to three usable modules: AI fundamentals, practical prompting, and ethical AI use. Each has original explanatory content, a practice task, and a knowledge check. A correct answer earns a badge; the course hub shows completion and a progress bar. Progress is stored in this browser and can be used without an account. The prompt builder in the tools module runs locally and does not send its text to an AI service.
+
+The public `/references.html` page credits content sources, fonts, services, graphics, and AI assistance. It also documents the site's stack; there is no front-end framework or CMS. See `RUBRIC_AUDIT.md` for what is implemented and what still needs student-supplied documents or a live deployment.
 
 ## Validation
 

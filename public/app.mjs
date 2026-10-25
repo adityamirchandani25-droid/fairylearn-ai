@@ -1,5 +1,6 @@
 import { questions, levels, getLevel, validAnswers, planDescription } from './learning.mjs';
 import { attachMotion, logoMarkup, startLoading } from './motion.mjs';
+import { courseModules, completedCourseIds } from './course.mjs';
 
 const app = document.querySelector('#app');
 let theme = read('fairylearn-theme') === 'night' ? 'night' : 'day';
@@ -15,6 +16,9 @@ let currentView = 'home';
 let selectedLevel;
 let description = '';
 let busy = false;
+let completedModules = completedCourseIds(read('fairylearn-course-progress'));
+let activeModule = null;
+let selectedQuizAnswer = null;
 const configured = !!(config.supabaseUrl && config.supabaseAnonKey);
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const star = logoMarkup('brand-logo');
@@ -38,12 +42,12 @@ function toggleTheme() {
   });
 }
 function toast(text) { const el = document.querySelector('#toast'); el.textContent = text; el.classList.add('visible'); clearTimeout(toast.timer); toast.timer = setTimeout(() => el.classList.remove('visible'), 4200); }
-function header(simple = false) { return `<header class="header"><a class="brand" href="#" data-action="home">${star}<span>fairylearn<span class="brand-ai">AI</span></span></a>${simple ? `<div class="simple-header-actions"><span class="header-note">Your next chapter starts here.</span>${themeButton()}</div>` : `<nav aria-label="Main navigation"><a href="#how-it-works" data-action="how">How it works</a><a href="#paths" data-action="paths">Learning paths</a></nav><div class="header-actions">${themeButton()}${session ? '<button class="text-button" data-action="dashboard">My path ↗</button><button class="text-button" data-action="logout">Log out</button>' : '<button class="text-button" data-action="login">Log in</button><button class="button small dark" data-action="signup">Get started <span>↗</span></button>'}</div>`}</header>`; }
-function footer() { return `<footer><a class="brand" href="#" data-action="home">${star}<span>fairylearn<span class="brand-ai">AI</span></span></a><p>A little curiosity goes a long way.</p><span>Made for human potential. ✧</span></footer>`; }
+function header(simple = false) { return `<header class="header"><a class="brand" href="#" data-action="home">${star}<span>fairylearn<span class="brand-ai">AI</span></span></a>${simple ? `<div class="simple-header-actions"><span class="header-note">Your next chapter starts here.</span>${themeButton()}</div>` : `<nav aria-label="Main navigation"><a href="#how-it-works" data-action="how">How it works</a><a href="#paths" data-action="paths">Learning paths</a><button class="nav-link" data-action="course">Explore lessons</button></nav><div class="header-actions">${themeButton()}${session ? '<button class="text-button" data-action="dashboard">My path ↗</button><button class="text-button" data-action="logout">Log out</button>' : '<button class="text-button" data-action="login">Log in</button><button class="button small dark" data-action="signup">Get started <span>↗</span></button>'}</div>`}</header>`; }
+function footer() { return `<footer><a class="brand" href="#" data-action="home">${star}<span>fairylearn<span class="brand-ai">AI</span></span></a><p>A little curiosity goes a long way.</p><a class="footer-reference" href="/references.html">Sources &amp; project credits ↗</a><span>Made for human potential. ✧</span></footer>`; }
 function illustration() { return `<div class="illustration" aria-label="An illustrated winding path through a world of AI discoveries" role="img"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><div class="sky-star s1">✧</div><div class="sky-star s2">✦</div><div class="sky-star s3">✧</div><div class="sky-star s4">+</div><div class="float-tag tag-top"><i class="dot"></i> A path that’s uniquely yours</div><svg class="journey-svg" viewBox="0 0 520 440" fill="none" aria-hidden="true"><path d="M80 410C65 325 390 373 382 283C376 215 148 283 159 190C166 131 318 166 319 80" stroke="#e4e1d6" stroke-width="56"/><path d="M80 410C65 325 390 373 382 283C376 215 148 283 159 190C166 131 318 166 319 80" stroke="#fffdf7" stroke-width="44"/><path d="M80 410C65 325 390 373 382 283C376 215 148 283 159 190C166 131 318 166 319 80" stroke="#c4bcd5" stroke-width="2" stroke-dasharray="7 9"/><ellipse cx="319" cy="82" rx="32" ry="11" fill="#c3b6e0"/><path d="M319 80V20" stroke="#655784" stroke-width="3"/><path d="M321 21L355 30L321 43Z" fill="#9678c0"/></svg><div class="world-card card-spark"><span>✦</span><small>BIG IDEAS</small></div><div class="world-card card-book"><span>▤</span><small>SMALL STEPS</small></div><div class="world-card card-bot"><span class="robot"><i></i><i></i></span><small>YOUR AI GUIDE</small></div><div class="plant plant-one">✳</div><div class="plant plant-two">✳</div><div class="float-tag tag-bottom"><span>✧</span> A little wiser, every day.</div></div>`; }
 function home() {
   currentView = 'home';
-  app.innerHTML = `${header()}<main><section class="hero"><div class="hero-copy"><div class="eyebrow"><span></span> A LITTLE CURIOSITY. A WORLD OF POSSIBILITY.</div><h1>Big world of AI.<br>Your own <em>little<br>way in.</em><span class="title-star">✧</span></h1><p>AI doesn’t have to feel like another language.<br class="desktop-break"> Find your starting point, follow your curiosity, and learn<br class="desktop-break"> at a pace that feels like you.</p><div class="hero-actions"><button class="button purple" data-action="signup">Find my learning path <span>↗</span></button><span class="hero-caption">No experience needed.<br>Just a little wonder.</span></div><button class="demo-link" data-action="demo">Take a peek without an account <span>→</span></button></div>${illustration()}</section><div class="value-strip"><span><i>✧</i> Built around you</span><span><i>◷</i> Your pace, your progress</span><span><i>♧</i> From curious to confident</span><span><i>✳</i> A little help from AI</span></div><section class="how-section" id="how-it-works"><div class="section-intro"><div><div class="eyebrow">A PATH, NOT A LEAP</div><h2>Every great journey starts<br>with a little <em>hello.</em></h2></div><p>You bring the curiosity.<br>We’ll help you find your way.</p></div><div class="steps-grid"><article><span class="step-number">01 /</span><div class="step-icon lavender">☷</div><h3>Tell us a little about you</h3><p>A few quick questions about what you know, what you love, and where you want to go.</p><span class="mini-note">ABOUT 2 MINUTES</span></article><article><span class="step-number">02 /</span><div class="step-icon peach">⌁</div><h3>Find your starting point</h3><p>Get a personal learning path that fits your experience, goals, and everyday life.</p><span class="mini-note">MADE FOR YOU</span></article><article><span class="step-number">03 /</span><div class="step-icon sage">✧</div><h3>Grow one discovery at a time</h3><p>Your path is just the beginning. Lessons, slides, and a helpful AI guide are coming next.</p><span class="mini-note">SOMETHING TO LOOK FORWARD TO</span></article></div></section><section class="paths-section" id="paths"><div class="eyebrow">EVERY STARTING POINT BELONGS</div><h2>A little room for <em>everyone.</em></h2><p>Brand-new to AI or ready to go deeper? There’s a path for you.</p><div class="level-preview">${levels.map((level, i) => `<div><span class="level-glyph">${['·', '✧', '✳', '✺'][i]}</span><h3>${level}</h3><p>${['Start with the very basics.', 'Turn curiosity into confidence.', 'Put your knowledge to work.', 'Explore what’s possible next.'][i]}</p></div>`).join('')}</div><button class="button dark" data-action="signup">Let’s find your path <span>↗</span></button></section></main>${footer()}`;
+  app.innerHTML = `${header()}<main><section class="hero"><div class="hero-copy"><div class="eyebrow"><span></span> A LITTLE CURIOSITY. A WORLD OF POSSIBILITY.</div><h1>Big world of AI.<br>Your own <em>little<br>way in.</em><span class="title-star">✧</span></h1><p>AI doesn’t have to feel like another language.<br class="desktop-break"> Find your starting point, follow your curiosity, and learn<br class="desktop-break"> at a pace that feels like you.</p><div class="hero-actions"><button class="button purple" data-action="signup">Find my learning path <span>↗</span></button><span class="hero-caption">No experience needed.<br>Just a little wonder.</span></div><button class="demo-link" data-action="demo">Take a peek without an account <span>→</span></button></div>${illustration()}</section><div class="value-strip"><span><i>✧</i> Built around you</span><span><i>◷</i> Your pace, your progress</span><span><i>♧</i> From curious to confident</span><span><i>✳</i> A little help from AI</span></div><section class="how-section" id="how-it-works"><div class="section-intro"><div><div class="eyebrow">A PATH, NOT A LEAP</div><h2>Every great journey starts<br>with a little <em>hello.</em></h2></div><p>You bring the curiosity.<br>We’ll help you find your way.</p></div><div class="steps-grid"><article><span class="step-number">01 /</span><div class="step-icon lavender">☷</div><h3>Tell us a little about you</h3><p>A few quick questions about what you know, what you love, and where you want to go.</p><span class="mini-note">ABOUT 2 MINUTES</span></article><article><span class="step-number">02 /</span><div class="step-icon peach">⌁</div><h3>Find your starting point</h3><p>Get a personal learning path that fits your experience, goals, and everyday life.</p><span class="mini-note">MADE FOR YOU</span></article><article><span class="step-number">03 /</span><div class="step-icon sage">✧</div><h3>Grow one discovery at a time</h3><p>Start with three short lessons today. More level-specific lessons, slides, and a helpful AI guide are coming next.</p><span class="mini-note">SOMETHING TO LOOK FORWARD TO</span></article></div></section><section class="paths-section" id="paths"><div class="eyebrow">EVERY STARTING POINT BELONGS</div><h2>A little room for <em>everyone.</em></h2><p>Brand-new to AI or ready to go deeper? There’s a path for you.</p><div class="level-preview">${levels.map((level, i) => `<div><span class="level-glyph">${['·', '✧', '✳', '✺'][i]}</span><h3>${level}</h3><p>${['Start with the very basics.', 'Turn curiosity into confidence.', 'Put your knowledge to work.', 'Explore what’s possible next.'][i]}</p></div>`).join('')}</div><button class="button dark" data-action="signup">Let’s find your path <span>↗</span></button></section>${courseTeaser()}</main>${footer()}`;
 }
 function auth(mode = 'signup') {
   currentView = mode;
@@ -101,11 +105,25 @@ const modules = {
   Medium: ['From simple prompts to workflows', 'Understanding how models learn', 'Checking facts, bias, and limitations'],
   Expert: ['Inside modern language models', 'Building with models and APIs', 'Evaluating responsible AI systems']
 };
+function courseTeaser() {
+  return `<section class="course-teaser"><div><div class="eyebrow">START LEARNING TODAY</div><h2>Three small steps into AI.</h2><p>Learn how AI works, practice better prompts, and use it responsibly at school.</p></div><button class="button purple" data-action="course">Explore free lessons <span>→</span></button></section>`;
+}
+function courseHub() {
+  currentView = 'course';
+  const count = completedModules.length;
+  app.innerHTML = `${header()}<main class="course-page"><section class="course-hero"><div class="eyebrow">YOUR AI LEARNING QUEST</div><h1>Small lessons. <em>Big ideas.</em></h1><p>Made for curious high school students. You can start here without an account.</p><div class="course-progress" role="progressbar" aria-label="Lessons completed" aria-valuemin="0" aria-valuemax="3" aria-valuenow="${count}"><div><span>YOUR PROGRESS</span><strong>${count} of 3 lessons complete</strong></div><div class="course-progress-track"><span style="width:${count / 3 * 100}%"></span></div></div><div class="badge-row" aria-label="Achievement badges">${courseModules.map(module => `<span class="course-badge ${completedModules.includes(module.id) ? 'earned' : ''}" title="${completedModules.includes(module.id) ? 'Earned' : 'Complete the lesson to earn'} ${module.badge}"><span aria-hidden="true">${module.icon}</span>${module.badge}${completedModules.includes(module.id) ? ' ✓' : ''}</span>`).join('')}</div></section><section class="course-grid" aria-label="Learning modules">${courseModules.map(module => `<article class="course-module"><div class="module-meta"><span>${module.category}</span><span>${module.time}</span></div><div class="module-symbol" aria-hidden="true">${module.icon}</div><h2>${module.title}</h2><p>${module.summary}</p><button class="button ${completedModules.includes(module.id) ? 'outline' : 'purple'}" data-module="${module.id}">${completedModules.includes(module.id) ? 'Review lesson' : 'Start lesson'} <span>→</span></button><small>${completedModules.includes(module.id) ? '✓ Completed' : `Lesson ${module.number} of 03`}</small></article>`).join('')}</section><p class="course-save-note">✧ Your lesson progress is saved in this browser.</p></main>${footer()}`;
+}
+function courseLesson(id) {
+  const module = courseModules.find(item => item.id === id);
+  if (!module) return courseHub();
+  currentView = 'course-lesson'; activeModule = id; selectedQuizAnswer = null;
+  app.innerHTML = `${header(true)}<main class="course-page lesson-page"><button class="back-link" data-action="course">← All lessons</button><div class="lesson-heading"><div class="eyebrow">${module.category} · LESSON ${module.number}</div><h1>${module.title}</h1><p>${module.summary}</p></div><div class="lesson-body"><div class="lesson-copy">${module.sections.map((section, index) => `<section><span class="lesson-step">0${index + 1}</span><h2>${section.title}</h2><p>${section.text}</p></section>`).join('')}<div class="try-it"><strong>✧ Your turn</strong><p>${module.task}</p></div>${id === 'tools' ? '<div class="prompt-lab"><h2>Build a practice prompt</h2><p>Nothing you type here is sent to an AI service.</p><label>My topic<input data-prompt-field="topic" placeholder="e.g. photosynthesis" maxlength="80"></label><label>What I want to practice<input data-prompt-field="task" placeholder="e.g. a short quiz" maxlength="80"></label><label>My grade<input data-prompt-field="grade" placeholder="e.g. 10" maxlength="20"></label><div class="prompt-preview" role="status" aria-live="polite">Your prompt will appear here as you type.</div></div>' : ''}<p class="lesson-source">Learn more: <a href="${module.source}" target="_blank" rel="noopener noreferrer">Original source ↗</a> · <a href="/references.html">All sources ↗</a></p></div><aside class="lesson-check"><div class="eyebrow">CHECK YOUR UNDERSTANDING</div><h2>${module.question}</h2><div class="quiz-options" role="radiogroup" aria-label="Knowledge check">${module.choices.map((choice, index) => `<button type="button" class="quiz-choice" role="radio" aria-checked="false" data-quiz-choice="${index}"><span>${String.fromCharCode(65 + index)}</span>${choice}</button>`).join('')}</div><p id="quiz-feedback" role="status" aria-live="polite">Choose an answer to unlock your badge.</p><button class="button purple full" data-action="complete-module" disabled>Earn ${module.badge} <span>✧</span></button></aside></div></main>${footer()}`;
+}
 function dashboard() {
   currentView = 'dashboard';
   const assigned = getLevel(answers);
   selectedLevel ||= assigned;
-  app.innerHTML = `${header()}<main class="dashboard"><div class="dashboard-greeting"><div><div class="eyebrow">YOUR NEXT CHAPTER</div><h1>A little curiosity.<br><em>A path of your own.</em></h1><p>${name ? `Welcome, ${escape(name)}. ` : ''}Here’s where your AI adventure begins.</p></div><div class="path-badge"><span>✧</span><small>YOUR STARTING POINT</small><strong>${assigned}</strong></div></div>${!session ? '<div class="preview-notice"><span>✧ You’re exploring a preview. Your answers are saved in this browser.</span><button class="inline-button" data-action="signup">Create an account →</button></div>' : ''}<section class="personal-plan"><span class="plan-icon">✳</span><div><div class="eyebrow">A LITTLE PLAN, JUST FOR YOU</div><p>${escape(description || planDescription(answers))}</p><div class="plan-tags"><span>◷ ${answers.pace === '30' ? '30+' : answers.pace} min / day</span><span>◇ ${({ visual: 'Visual learning', practical: 'Hands-on learning', guided: 'Step by step', mixed: 'A little of everything' })[answers.format]}</span></div></div><button class="back-link" data-action="retake">Edit my answers ↗</button></section><div class="curriculum-heading"><div><h2>Your learning path</h2><p>Explore every level, starting wherever feels right.</p></div><span class="coming-pill">✧ LESSONS ARE ON THEIR WAY</span></div><div class="level-tabs" role="tablist" aria-label="Learning levels">${levels.map((level, i) => `<button role="tab" id="tab-${level}" aria-controls="lesson-panel" aria-selected="${selectedLevel === level}" data-level="${level}" class="${selectedLevel === level ? 'active' : ''}"><span>0${i + 1}</span>${level}${level === assigned ? '<small>YOUR MATCH</small>' : ''}</button>`).join('')}</div><section id="lesson-panel" role="tabpanel" aria-labelledby="tab-${selectedLevel}" class="lessons">${modules[selectedLevel].map((title, i) => `<article class="lesson"><div class="lesson-art art-${i}"><span>${['✧', '⌁', '✳'][i]}</span><small>0${i + 1}</small></div><div class="lesson-content"><div class="eyebrow">${selectedLevel.toUpperCase()} · LESSON 0${i + 1}</div><h3>${title}</h3><p>A new little discovery is coming soon.</p><div class="lesson-buttons"><button disabled title="Slideshows are coming soon">▤ Slideshow <span>⌑</span></button><button disabled title="Lessons are coming soon">▷ Lesson <span>⌑</span></button></div></div></article>`).join('')}</section><section class="tutor-banner"><span class="tutor-icon">✳</span><div><h3>A little help, whenever you need it.</h3><p>Your personal AI learning companion is coming soon.</p></div><span class="coming-pill">AI GUIDE · COMING SOON</span></section></main>${footer()}`;
+  app.innerHTML = `${header()}<main class="dashboard"><div class="dashboard-greeting"><div><div class="eyebrow">YOUR NEXT CHAPTER</div><h1>A little curiosity.<br><em>A path of your own.</em></h1><p>${name ? `Welcome, ${escape(name)}. ` : ''}Here’s where your AI adventure begins.</p></div><div class="path-badge"><span>✧</span><small>YOUR STARTING POINT</small><strong>${assigned}</strong></div></div>${!session ? '<div class="preview-notice"><span>✧ You’re exploring a preview. Your answers are saved in this browser.</span><button class="inline-button" data-action="signup">Create an account →</button></div>' : ''}<section class="personal-plan"><span class="plan-icon">✳</span><div><div class="eyebrow">A LITTLE PLAN, JUST FOR YOU</div><p>${escape(description || planDescription(answers))}</p><div class="plan-tags"><span>◷ ${answers.pace === '30' ? '30+' : answers.pace} min / day</span><span>◇ ${({ visual: 'Visual learning', practical: 'Hands-on learning', guided: 'Step by step', mixed: 'A little of everything' })[answers.format]}</span></div></div><button class="back-link" data-action="retake">Edit my answers ↗</button></section>${courseTeaser()}<div class="curriculum-heading"><div><h2>Your learning path</h2><p>Explore every level, starting wherever feels right.</p></div><span class="coming-pill">✧ MORE LESSONS ARE ON THEIR WAY</span></div><div class="level-tabs" role="tablist" aria-label="Learning levels">${levels.map((level, i) => `<button role="tab" id="tab-${level}" aria-controls="lesson-panel" aria-selected="${selectedLevel === level}" data-level="${level}" class="${selectedLevel === level ? 'active' : ''}"><span>0${i + 1}</span>${level}${level === assigned ? '<small>YOUR MATCH</small>' : ''}</button>`).join('')}</div><section id="lesson-panel" role="tabpanel" aria-labelledby="tab-${selectedLevel}" class="lessons">${modules[selectedLevel].map((title, i) => `<article class="lesson"><div class="lesson-art art-${i}"><span>${['✧', '⌁', '✳'][i]}</span><small>0${i + 1}</small></div><div class="lesson-content"><div class="eyebrow">${selectedLevel.toUpperCase()} · LESSON 0${i + 1}</div><h3>${title}</h3><p>A new little discovery is coming soon.</p><div class="lesson-buttons"><button disabled title="Slideshows are coming soon">▤ Slideshow <span>⌑</span></button><button disabled title="Lessons are coming soon">▷ Lesson <span>⌑</span></button></div></div></article>`).join('')}</section><section class="tutor-banner"><span class="tutor-icon">✳</span><div><h3>A little help, whenever you need it.</h3><p>Your personal AI learning companion is coming soon.</p></div><span class="coming-pill">AI GUIDE · COMING SOON</span></section></main>${footer()}`;
 }
 async function supabase(path, { method = 'GET', body, token = session?.access_token, headers = {} } = {}) {
   const res = await fetch(config.supabaseUrl + path, { method, signal: AbortSignal.timeout(15000), headers: { apikey: config.supabaseAnonKey, 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}), ...headers }, ...(body ? { body: JSON.stringify(body) } : {}) });
@@ -150,6 +168,24 @@ async function finish() {
   finally { busy = false; stopLoading(); }
 }
 app.addEventListener('click', async event => {
+  const moduleButton = event.target.closest('[data-module]');
+  if (moduleButton) { courseLesson(moduleButton.dataset.module); window.scrollTo(0, 0); return; }
+  const quizChoice = event.target.closest('[data-quiz-choice]');
+  if (quizChoice && activeModule) {
+    const module = courseModules.find(item => item.id === activeModule);
+    selectedQuizAnswer = Number(quizChoice.dataset.quizChoice);
+    app.querySelectorAll('[data-quiz-choice]').forEach(button => {
+      const selected = button === quizChoice;
+      button.classList.toggle('selected', selected);
+      button.setAttribute('aria-checked', String(selected));
+    });
+    const correct = selectedQuizAnswer === module.answer;
+    const feedback = app.querySelector('#quiz-feedback');
+    feedback.textContent = correct ? module.feedback : 'Not quite. Read the lesson and try another answer.';
+    feedback.classList.toggle('correct', correct);
+    app.querySelector('[data-action="complete-module"]').disabled = !correct;
+    return;
+  }
   const option = event.target.closest('[data-option]');
   if (option) {
     answers[questions[step].id] = option.dataset.option;
@@ -171,6 +207,15 @@ app.addEventListener('click', async event => {
   if (action === 'close-tip') { closeFairyTip(); fairyButton.focus(); return; }
   if (action === 'how' || action === 'paths') { home(); document.querySelector(action === 'how' ? '#how-it-works' : '#paths').scrollIntoView(); return; }
   if (action === 'home') home();
+  if (action === 'course') courseHub();
+  if (action === 'complete-module' && activeModule) {
+    const module = courseModules.find(item => item.id === activeModule);
+    if (selectedQuizAnswer !== module?.answer) return;
+    completedModules = completedCourseIds([...completedModules, activeModule]);
+    store('fairylearn-course-progress', completedModules);
+    courseHub();
+    toast(`You earned the ${module.badge} badge!`);
+  }
   if (action === 'signup' || action === 'login') auth(action);
   if (action === 'demo') { const saved = read('fairylearn-preview'); answers = saved?.answers || {}; step = 0; questionnaire(); }
   if (action === 'dashboard') dashboard();
@@ -180,15 +225,24 @@ app.addEventListener('click', async event => {
   if (action === 'logout') { const token = session?.access_token; session = null; sessionStorage.removeItem('fairylearn-session'); answers = {}; name = ''; home(); if (token) supabase('/auth/v1/logout', { method: 'POST', token }).catch(() => {}); }
   if (action !== 'next' && action !== 'previous') window.scrollTo(0, 0);
 });
+app.addEventListener('input', event => {
+  if (!event.target.matches('[data-prompt-field]')) return;
+  const values = Object.fromEntries([...app.querySelectorAll('[data-prompt-field]')].map(input => [input.dataset.promptField, input.value.trim()]));
+  const preview = app.querySelector('.prompt-preview');
+  preview.textContent = values.topic || values.task || values.grade
+    ? `I am in grade ${values.grade || '___'}. Help me learn ${values.topic || '___'} by giving me ${values.task || '___'}. Ask one question at a time and explain any mistakes.`
+    : 'Your prompt will appear here as you type.';
+});
 app.addEventListener('keydown', event => {
   if (event.key === 'Escape' && app.querySelector('#fairy-tip:not([hidden])')) { closeFairyTip(); fairyButton.focus(); return; }
   const option = event.target.closest('[data-option]');
   const tab = event.target.closest('[data-level]');
-  if (!option && !tab) return;
-  const items = [...app.querySelectorAll(option ? '[data-option]' : '[data-level]')];
-  const index = items.indexOf(option || tab);
+  const quiz = event.target.closest('[data-quiz-choice]');
+  if (!option && !tab && !quiz) return;
+  const items = [...app.querySelectorAll(option ? '[data-option]' : tab ? '[data-level]' : '[data-quiz-choice]')];
+  const index = items.indexOf(option || tab || quiz);
   const offset = ['ArrowRight', 'ArrowDown'].includes(event.key) ? 1 : ['ArrowLeft', 'ArrowUp'].includes(event.key) ? -1 : 0;
-  if (offset) { event.preventDefault(); const target = items[(index + offset + items.length) % items.length]; target.click(); }
+  if (offset) { event.preventDefault(); const target = items[(index + offset + items.length) % items.length]; target.click(); target.focus({ preventScroll: true }); }
 });
 app.addEventListener('submit', async event => {
   if (event.target.id !== 'auth-form') return;

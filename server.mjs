@@ -31,7 +31,7 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { description });
     }
     if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, { error: 'Method not allowed.' });
-    const files = { '/': 'index.html', '/styles.css': 'styles.css', '/app.mjs': 'app.mjs', '/learning.mjs': 'learning.mjs', '/motion.mjs': 'motion.mjs', '/logo.png': 'fairylearn-logo.png' };
+    const files = { '/': 'index.html', '/references.html': 'references.html', '/styles.css': 'styles.css', '/app.mjs': 'app.mjs', '/learning.mjs': 'learning.mjs', '/course.mjs': 'course.mjs', '/motion.mjs': 'motion.mjs', '/logo.png': 'fairylearn-logo.png' };
     if (!files[pathname]) return send(res, 404, { error: 'Not found.' });
     let data;
     try { data = await readFile(fileURLToPath(new URL(files[pathname], publicDir))); }
@@ -40,4 +40,5 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': { html: 'text/html; charset=utf-8', css: 'text/css', mjs: 'text/javascript', png: 'image/png' }[ext], 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin' }); res.end(req.method === 'HEAD' ? undefined : data);
   } catch { send(res, 500, { error: 'Something went wrong. Please try again.' }); }
 });
-server.listen(process.env.PORT || 3000, '127.0.0.1', () => console.log(`Fairylearn AI is ready at http://localhost:${process.env.PORT || 3000}`));
+const host = process.env.HOST || '127.0.0.1';
+server.listen(process.env.PORT || 3000, host, () => console.log(`Fairylearn AI is ready at http://${host}:${process.env.PORT || 3000}`));

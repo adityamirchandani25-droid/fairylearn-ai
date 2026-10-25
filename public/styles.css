@@ -167,3 +167,92 @@ body{transition:background-color .28s ease,color .28s ease}
 @media(max-width:760px){.simple-header-actions{gap:12px}.simple-header-actions .header-note{max-width:120px}.theme-toggle{width:38px;height:38px;padding:7px}.header-actions{gap:12px}}
 @media(max-width:420px){.simple-header-actions .header-note{display:none}.header-actions .theme-toggle{width:34px;height:34px;padding:6px}}
 @media(prefers-reduced-motion:reduce){body,.theme-toggle{transition:none}.theme-toggle:hover,.theme-toggle:active{transform:none}}
+
+/* Public lessons and earned progress for the Webmaster AI learning challenge. */
+.nav-link{border:0;background:none;padding:0;color:inherit;font-size:13px}
+.nav-link:hover,.footer-reference:hover,.lesson-source a:hover{text-decoration:underline;text-underline-offset:4px}
+.footer-reference{font-size:10px;color:var(--purple);white-space:nowrap}
+.course-teaser{max-width:1200px;margin:10px auto 55px;padding:31px 37px;border:1px solid #dfd7e9;border-radius:16px;background:#f2edf8;display:flex;justify-content:space-between;align-items:center;gap:22px}
+.course-teaser h2{font-size:28px;margin:6px 0 5px;letter-spacing:-.6px}
+.course-teaser p{font-size:12px;color:var(--muted)}
+.course-teaser .button{flex:none}
+.dashboard .course-teaser{margin:28px 0 10px}
+.course-page{max-width:1160px;margin:0 auto;padding:48px 35px 75px}
+.course-hero{padding:42px 48px;background:linear-gradient(125deg,#eee8f5,#f5f3e8);border-radius:22px;border:1px solid #dfd9e6}
+.course-hero h1,.lesson-heading h1{font-size:clamp(38px,5vw,58px);line-height:1.2;letter-spacing:-2px;margin:12px 0}
+.course-hero>p,.lesson-heading>p{font-size:14px;color:var(--muted);max-width:580px}
+.course-progress{max-width:520px;margin:32px 0 20px}
+.course-progress>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:15px;font-size:11px}
+.course-progress>div:first-child span{font-size:9px;letter-spacing:1.5px;font-weight:700;color:var(--purple)}
+.course-progress-track{height:12px;margin-top:10px;background:#ded9e4;border-radius:20px;overflow:hidden}
+.course-progress-track span{display:block;height:100%;background:linear-gradient(90deg,#8265b0,#5bc1d0);border-radius:20px;transition:width .4s ease}
+.badge-row{display:flex;flex-wrap:wrap;gap:9px}
+.course-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid #d9d4df;border-radius:30px;padding:6px 12px;color:#85818d;background:#fbfaf9;font-size:10px}
+.course-badge>span{font-size:18px;line-height:1}
+.course-badge.earned{border-color:#9e81bd;background:#e9dbf3;color:#654b82;font-weight:650}
+.course-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}
+.course-module{display:flex;flex-direction:column;padding:25px;border:1px solid var(--line);border-radius:15px;background:#fffefa;min-height:315px}
+.module-meta{display:flex;justify-content:space-between;gap:10px;font-size:9px;letter-spacing:1px;font-weight:650;color:var(--purple)}
+.module-meta span+span{color:var(--muted);font-weight:500}
+.module-symbol{width:52px;height:52px;border-radius:15px;background:#eee8f5;color:#896ca9;display:grid;place-items:center;font-size:32px;margin:22px 0 11px}
+.course-module:nth-child(2) .module-symbol{background:#e9efe8;color:#71967d}
+.course-module:nth-child(3) .module-symbol{background:#f7ece2;color:#bc8a66}
+.course-module h2{font-size:24px;line-height:1.25;letter-spacing:-.6px}
+.course-module p{font-size:12px;color:var(--muted);line-height:1.8;margin:9px 0 22px}
+.course-module .button{margin-top:auto;width:100%;justify-content:space-between}
+.course-module small{font-size:10px;color:var(--muted);margin-top:12px}
+.course-save-note{font-size:11px;color:var(--muted);margin-top:17px}
+.lesson-page>.back-link{margin-bottom:20px}
+.lesson-heading{max-width:770px;margin-bottom:35px}
+.lesson-body{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:40px;align-items:start}
+.lesson-copy>section{position:relative;padding:23px 0 27px 52px;border-top:1px solid var(--line)}
+.lesson-step{position:absolute;top:24px;left:0;font-family:var(--serif);color:var(--purple);font-size:21px}
+.lesson-copy h2,.try-it h2,.prompt-lab h2{font-size:24px;letter-spacing:-.5px;margin-bottom:9px}
+.lesson-copy p{font-size:14px;line-height:1.85;color:#666e64}
+.try-it{border-radius:13px;padding:22px 25px;background:#eaf0e7;margin:4px 0 25px}
+.try-it strong{font-size:13px;color:#637b58}
+.try-it p{margin-top:7px}
+.lesson-copy .lesson-source{font-size:11px;margin:26px 0;color:var(--muted)}
+.lesson-source a{color:var(--purple)}
+.lesson-check{position:sticky;top:22px;border:1px solid #ded6e6;border-radius:16px;padding:24px;background:#f6f1fa}
+.lesson-check h2{font-size:20px;line-height:1.4;margin:11px 0 16px}
+.quiz-options{display:grid;gap:9px}
+.quiz-choice{width:100%;display:flex;align-items:flex-start;gap:11px;text-align:left;padding:12px;border:1px solid #dcd4e5;border-radius:9px;background:#fffefa;font-size:11px;line-height:1.55}
+.quiz-choice:hover,.quiz-choice.selected{border-color:#9876bf;background:#efe5f7}
+.quiz-choice>span{font-family:var(--serif);font-size:17px;line-height:1;color:var(--purple)}
+#quiz-feedback{font-size:11px;color:var(--muted);margin:15px 0;min-height:34px}
+#quiz-feedback.correct{color:#54754f;font-weight:600}
+.prompt-lab{padding:24px;border:1px solid #dcd9e8;border-radius:14px;background:#f7f5fb}
+.prompt-lab>p{margin-bottom:15px;font-size:11px}
+.prompt-lab label{margin-bottom:10px}
+.prompt-lab input{background:#fff;width:100%}
+.prompt-preview{padding:16px;border-radius:8px;border:1px dashed #b9a9c9;background:#fffefa;font-size:12px;line-height:1.7;min-height:58px}
+:root[data-theme=night] .course-teaser,:root[data-theme=night] .course-hero{background:linear-gradient(125deg,#302c40,#252f31);border-color:#514b61}
+:root[data-theme=night] .course-module,:root[data-theme=night] .quiz-choice{background:#222832;border-color:#48505c}
+:root[data-theme=night] .course-hero>p,:root[data-theme=night] .lesson-heading>p,:root[data-theme=night] .course-module p,:root[data-theme=night] .course-teaser p,:root[data-theme=night] .lesson-copy p{color:#bdc5ce}
+:root[data-theme=night] .course-badge{background:#262b35;border-color:#555360;color:#bac0c9}
+:root[data-theme=night] .course-badge.earned{background:#463652;border-color:#ac87cd;color:#e5cff7}
+:root[data-theme=night] .course-progress-track{background:#514b5b}
+:root[data-theme=night] .lesson-check,:root[data-theme=night] .prompt-lab{background:#2b293a;border-color:#595068}
+:root[data-theme=night] .quiz-choice:hover,:root[data-theme=night] .quiz-choice.selected{background:#41334e;border-color:#a584c7}
+:root[data-theme=night] .try-it{background:#28382e}
+:root[data-theme=night] .try-it strong,:root[data-theme=night] #quiz-feedback.correct{color:#a5d2a0}
+:root[data-theme=night] .prompt-preview{background:#222832;border-color:#746580}
+@media(max-width:900px){.course-grid{grid-template-columns:1fr 1fr}.lesson-body{grid-template-columns:1fr}.lesson-check{position:static;max-width:650px}}
+@media(max-width:760px){.course-teaser{margin:10px 24px 35px;padding:24px;display:block}.dashboard .course-teaser{margin:24px 0 10px}.course-teaser .button{margin-top:19px}.course-page{padding:33px 24px 55px}.course-hero{padding:28px}.course-grid{grid-template-columns:1fr}.course-module{min-height:0}.course-hero h1,.lesson-heading h1{letter-spacing:-1.5px}.course-badge{font-size:9px}.lesson-copy>section{padding-left:42px}.lesson-body{gap:15px}.footer-reference{order:2;width:100%;text-align:center}}
+@media(prefers-reduced-motion:reduce){.course-progress-track span{transition:none}}
+
+/* Public reference page. */
+.references-page{max-width:890px;margin:0 auto;padding:56px 34px 80px}
+.references-page h1{font-size:clamp(36px,5vw,56px);line-height:1.18;letter-spacing:-1.7px;margin:13px 0 18px}
+.references-intro{font-size:14px;color:var(--muted);line-height:1.8;max-width:730px}
+.references-page section{margin-top:42px;border-top:1px solid var(--line);padding-top:28px}
+.references-page h2{font-size:26px;letter-spacing:-.5px;margin-bottom:17px}
+.references-page ol,.references-page ul{padding-left:23px}
+.references-page li{padding-left:6px;margin:0 0 19px;font-size:13px;line-height:1.8}
+.references-page li::marker{color:var(--purple)}
+.references-page li a{color:var(--purple);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.references-page li p{font-size:12px;color:var(--muted);margin:3px 0 0}
+:root[data-theme=night] .references-page li p{color:#bdc5ce}
+@media(max-width:760px){.references-page{padding:37px 24px 60px}.references-header{gap:12px}.references-header .brand{font-size:18px}.references-header .back-link{font-size:10px}}
+@media(max-width:420px){.header{padding:0 15px;gap:8px}.brand{font-size:17px;gap:5px}.brand-logo{width:30px;height:30px}.brand-ai{font-size:8px;margin-left:3px}.header-actions{gap:7px}.header-actions .text-button{font-size:11px;white-space:nowrap}.header-actions .button{font-size:10px;gap:7px;padding:9px 10px;white-space:nowrap}.references-header .brand{font-size:17px}}
