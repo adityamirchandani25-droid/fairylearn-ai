@@ -1,0 +1,27 @@
+/* 16-free.css — "Free to start" band. Live "Safe and secure": full bleed, 140px vertical
+   padding, 44px heading in a 732px column, 20px/28px Stone text, pill 40px below, three 96px
+   circular badges 20px apart. Here the band is Bone on the Linen canvas, and mirrored. */
+
+.free { background: var(--color-bone); padding-block: var(--section-pad); }
+.free-inner { display: grid; grid-template-columns: 1fr minmax(0, 732px); align-items: center; column-gap: 64px; }
+.free-seals { display: flex; gap: 20px; }
+.free-seal { position: relative; width: 96px; height: 96px; display: grid; place-items: center; }
+.free-ring { position: absolute; inset: -12px; width: 120px; height: 120px; fill: none; stroke: rgba(22, 15, 12, 0.22); stroke-width: 1; stroke-dasharray: 1.5 5.5; stroke-linecap: round; opacity: 0; transform: scale(0.94); transition: opacity var(--dur) var(--ease-out), transform var(--dur) var(--ease-out); }
+.free-seal:hover .free-ring { opacity: 1; transform: scale(1); }
+.free .seal { position: relative; color: var(--color-stone); background: var(--color-paper-white); }
+.free .seal span { display: grid; justify-items: center; gap: 2px; font-family: var(--font-mono); font-weight: 400; font-size: 11px; line-height: 13px; letter-spacing: 0.02em; text-transform: uppercase; max-width: 72px; }
+.free .seal strong { margin: 0; font-family: var(--font-sans); font-size: 26px; line-height: 1; letter-spacing: -0.05em; color: var(--color-graphite); font-weight: var(--font-weight-medium); }
+.free-text { margin-top: 24px; font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-stone); max-width: 640px; }
+.free-actions { margin-top: 40px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.free-actions .btn-dark { height: 42px; }
+.free-copy h2 { color: #000; }
+
+@media (max-width: 1023px) {
+  .free-inner { grid-template-columns: 1fr; row-gap: 48px; }
+  .free-seals { order: 2; }
+}
+@media (max-width: 767px) {
+  .free-seals { gap: 16px; }
+  .free-text { font-size: 16px; line-height: 24px; }
+  .free-actions { margin-top: 28px; }
+}

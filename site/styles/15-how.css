@@ -1,0 +1,107 @@
+/* 15-how.css — "How it works" (the live quote-carousel slot). Measured at 1440: centered
+   44px heading, 18px soft subline 16px below, a 56px selector row 48px below that, then a
+   1120×460 card 24px below: 640px copy panel (64px padding, 32px/38.4px text) + 480px visual. */
+
+.how { padding-block: var(--section-gap); }
+.how-head { text-align: center; }
+.how-head h2 { max-width: 800px; margin-inline: auto; }
+.how-sub { max-width: 540px; margin: 16px auto 0; font-size: var(--text-body); line-height: 1.2; letter-spacing: -0.01em; color: var(--color-ink-60); }
+
+/* Selector row: like the live logo selector (gray inactive, ink active), edge-masked. */
+.how-tabs { margin-top: 48px; height: 56px; display: flex; justify-content: center; align-items: stretch; gap: 48px; -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,0) 0%, #000 5%, #000 95%, rgba(0,0,0,0.03) 100%); mask-image: linear-gradient(90deg, rgba(0,0,0,0) 0%, #000 5%, #000 95%, rgba(0,0,0,0.03) 100%); }
+.how-tab { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 0 2px; font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-stone); opacity: 0.5; transition: opacity var(--dur) var(--ease-out), color var(--dur) var(--ease-out); white-space: nowrap; }
+.how-tab:hover { opacity: 0.8; }
+.how-tab.is-active { color: var(--color-aubergine-ink); opacity: 1; }
+.how-tab-num { font-family: var(--font-mono); font-size: 12px; line-height: 16px; letter-spacing: 0.02em; padding-top: 2px; }
+.how-tab-line { position: absolute; left: 0; right: 0; bottom: 8px; height: 1px; background: var(--color-hairline); overflow: hidden; opacity: 0; transition: opacity var(--dur) linear; }
+.how-tab.is-active .how-tab-line { opacity: 1; }
+.how-tab-line i { display: block; height: 100%; width: 100%; background: var(--color-aubergine-ink); transform: scaleX(0); transform-origin: left; }
+.how-tab.is-active .how-tab-line i { transform: scaleX(1); }
+.how-carousel.is-timing .how-tab.is-active .how-tab-line i { transform: scaleX(0); animation: how-line var(--how-interval, 4.5s) linear forwards; }
+@keyframes how-line { to { transform: scaleX(1); } }
+
+/* Card */
+.how-card { margin-top: 24px; display: grid; grid-template-columns: 640fr 480fr; min-height: 460px; border-radius: var(--radius-cards); overflow: hidden; background: var(--color-paper-white); box-shadow: var(--shadow-subtle); }
+.how-copy { display: grid; padding: 64px; }
+.how-step { grid-area: 1 / 1; display: flex; flex-direction: column; justify-content: space-between; gap: 40px; visibility: hidden; }
+.how-step.is-active { visibility: visible; }
+.how-text { font-size: 32px; line-height: 38.4px; letter-spacing: -0.03em; color: var(--color-charcoal); max-width: 460px; text-wrap: pretty; }
+.how-word { display: inline-block; opacity: 0; filter: blur(8px); transition: opacity 0.5s var(--ease-out), filter 0.5s var(--ease-out); transition-delay: calc(var(--i) * 25ms); }
+.how-step.is-active .how-word { opacity: 1; filter: blur(0); }
+.how-carousel.is-waiting .how-word { opacity: 0; filter: blur(8px); }
+.how-step:not(.is-active) .how-word { transition-delay: 0s; transition-duration: 0.2s; }
+.how-meta { display: grid; gap: 4px; font-size: 16px; line-height: 24px; letter-spacing: -0.01em; }
+.how-meta-label { color: var(--color-aubergine-ink); }
+.how-meta-note { color: var(--color-ink-60); }
+.how-step .how-meta { opacity: 0; transform: translateY(6px); transition: opacity 0.5s var(--ease-out) 0.25s, transform 0.5s var(--ease-out) 0.25s; }
+.how-step.is-active .how-meta { opacity: 1; transform: none; }
+
+/* Visual panel: Bone, fragments crossfade. */
+.how-visual { position: relative; background: #e4e2db; display: grid; overflow: hidden; }
+.how-visual::before { content: ''; position: absolute; inset: 0; background: radial-gradient(120% 80% at 50% 0%, var(--color-bone) 0%, rgba(237, 236, 231, 0) 70%); }
+.how-frame { grid-area: 1 / 1; position: relative; display: grid; place-items: center; padding: 40px; opacity: 0; transform: scale(0.985); transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-out); }
+.how-frame.is-active { opacity: 1; transform: none; }
+
+/* Fragment surfaces: white cards with the inset ring, Bone canvas. */
+.how-q, .how-path, .how-grow { width: 100%; max-width: 340px; }
+.how-q { background: var(--color-paper-white); border-radius: var(--radius-cards); box-shadow: var(--shadow-subtle); padding: 20px; }
+.how-q-kicker { font-family: var(--font-mono); font-size: 11px; line-height: 16px; letter-spacing: 0.02em; text-transform: uppercase; color: var(--color-stone); }
+.how-q-title { margin-top: 6px; font-size: 18px; line-height: 24px; letter-spacing: -0.02em; color: var(--color-aubergine-ink); }
+.how-options { margin-top: 14px; display: grid; gap: 6px; }
+.how-option { display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid transparent; background: var(--color-linen); font-size: 14px; line-height: 20px; color: var(--color-charcoal); }
+.how-option.is-picked { background: var(--color-paper-white); border-color: var(--color-espresso); }
+.how-option-key { font-family: var(--font-mono); font-size: 11px; color: var(--color-stone); }
+.how-option-check { margin-left: auto; width: 20px; height: 20px; border-radius: 50%; background: var(--color-espresso); color: #fff; display: grid; place-items: center; }
+
+.how-level { display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: var(--radius-cards); background: var(--color-paper-white); box-shadow: var(--shadow-subtle); }
+.how-level > span:nth-child(2) { display: grid; flex: 1; }
+.how-level-icon { width: 40px; height: 40px; border-radius: 12px; background: var(--color-bone); display: grid; place-items: center; color: var(--color-charcoal); }
+.how-level-kicker { font-size: 12px; line-height: 16px; color: var(--color-stone); }
+.how-level-name { font-size: 20px; line-height: 26px; letter-spacing: -0.03em; color: var(--color-aubergine-ink); }
+.how-stops { margin-top: 10px; display: grid; gap: 6px; position: relative; }
+.how-stops::before { content: ''; position: absolute; left: 23px; top: 20px; bottom: 20px; width: 1px; background: repeating-linear-gradient(180deg, rgba(22, 15, 12, 0.25) 0 3px, transparent 3px 7px); }
+.how-stop { position: relative; display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 18px; border-radius: 12px; background: rgba(255, 255, 255, 0.55); font-size: 14px; line-height: 20px; color: var(--color-charcoal); }
+.how-stop.is-next { background: var(--color-paper-white); box-shadow: var(--shadow-subtle); }
+.how-stop-dot { width: 11px; height: 11px; flex: none; border-radius: 50%; border: 1px solid rgba(22, 15, 12, 0.35); background: var(--color-bone); }
+.how-stop.is-next .how-stop-dot { background: var(--color-espresso); border-color: var(--color-espresso); }
+.how-stop-title { flex: 1; }
+.how-stop-meta { font-size: 12px; color: var(--color-stone); white-space: nowrap; }
+
+.how-grow { display: grid; justify-items: center; gap: 20px; }
+.how-ring { position: relative; width: 150px; height: 150px; }
+.how-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); fill: none; }
+.how-ring-track { stroke: rgba(22, 15, 12, 0.1); stroke-width: 6; }
+.how-ring-fill { stroke: var(--color-espresso); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset 1.2s var(--ease-out) 0.2s; }
+.how-frame.is-active .how-ring-fill { stroke-dashoffset: 33.3; }
+.how-ring-copy { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.how-ring-num { font-size: 40px; line-height: 1; letter-spacing: -0.05em; color: var(--color-aubergine-ink); font-variant-numeric: tabular-nums; }
+.how-ring-num span { color: var(--color-stone); font-size: 24px; }
+.how-ring-label { margin-top: 4px; font-size: 12px; line-height: 16px; color: var(--color-stone); }
+.how-wins { width: 100%; display: grid; gap: 6px; }
+.how-wins li { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; background: var(--color-paper-white); box-shadow: var(--shadow-subtle); font-size: 14px; line-height: 20px; color: var(--color-charcoal); }
+.how-wins li.is-soft { background: rgba(255, 255, 255, 0.55); box-shadow: none; }
+.how-wins span { flex: 1; }
+.how-wins b { font-weight: var(--font-weight-medium); font-variant-numeric: tabular-nums; color: var(--color-aubergine-ink); }
+
+@media (max-width: 1023px) {
+  .how-tabs { gap: 28px; }
+  .how-tab { font-size: 17px; }
+  .how-copy { padding: 40px; }
+  .how-text { font-size: 26px; line-height: 32px; }
+  .how-card { grid-template-columns: 1fr 1fr; min-height: 420px; }
+  .how-frame { padding: 28px; }
+}
+@media (max-width: 767px) {
+  .how-sub { font-size: 16px; line-height: 22px; }
+  .how-tabs { margin-top: 32px; justify-content: flex-start; gap: 24px; overflow-x: auto; scrollbar-width: none; padding-inline: 16px; margin-inline: calc(var(--gutter) * -1); -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,0) 0%, #000 6%, #000 90%, rgba(0,0,0,0) 100%); mask-image: linear-gradient(90deg, rgba(0,0,0,0) 0%, #000 6%, #000 90%, rgba(0,0,0,0) 100%); }
+  .how-tabs::-webkit-scrollbar { display: none; }
+  .how-tab { font-size: 16px; }
+  .how-card { grid-template-columns: 1fr; min-height: 0; }
+  .how-copy { padding: 24px; min-height: 280px; }
+  .how-text { font-size: 22px; line-height: 28px; }
+  .how-visual { min-height: 340px; }
+  .how-frame { padding: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .how-word { filter: none; }
+}

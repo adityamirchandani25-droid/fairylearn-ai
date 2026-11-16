@@ -15,11 +15,11 @@ const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
 const ease = 'cubic-bezier(.22, 1, .36, 1)';
 let pendingLoads = 0;
 
-// The HTML for the Fairylearn logo. It includes a ✳ fallback symbol that shows if the image
-// fails to load; CSS hides the fallback once the image has loaded (the .has-logo class).
-// aria-hidden: the logo is decorative, because the brand name is written next to it.
+// The HTML for the Fairylearn mark: the same line-drawn sparkle over a path as the marketing site.
+// It is inline SVG, so there is nothing to load and no fallback to show.
+// aria-hidden: the mark is decorative, because the brand name is written next to it.
 export function logoMarkup(className = '') {
-  return `<span class="logo-image ${className}" aria-hidden="true"><img src="/logo.png" alt="" width="160" height="160"><span class="logo-fallback">✳</span></span>`;
+  return `<span class="logo-image has-logo ${className}" aria-hidden="true"><svg class="brand-mark" viewBox="0 0 26 26" focusable="false"><path d="M13 2.5c.7 5.2 2.8 7.3 8 8-5.2.7-7.3 2.8-8 8-.7-5.2-2.8-7.3-8-8 5.2-.7 7.3-2.8 8-8Z"/><path d="M4.5 23.5c3-1.6 6-1.6 8.5 0s5.5 1.6 8.5 0"/></svg></span>`;
 }
 
 // Adds the has-logo class to every logo whose image has actually loaded (naturalWidth > 0
@@ -100,7 +100,7 @@ export function attachMotion(app) {
         observer.unobserve(entry.target);
       });
     }, { threshold: 0.08, rootMargin: '0px 0px -24px 0px' });
-    const elements = app.querySelectorAll('.value-strip > span, .section-intro, .steps-grid > article, .paths-section > .eyebrow, .paths-section > h2, .paths-section > p, .level-preview > div, .paths-section > .button, .personal-plan, .curriculum-heading, .lessons > article, .tutor-banner, footer');
+    const elements = app.querySelectorAll('.value-strip > span, .section-intro, .steps-grid > article, .paths-section > .eyebrow, .paths-section > h2, .paths-section > p, .level-preview > div, .paths-section > .button, .personal-plan, .curriculum-heading, .lessons > article, .tutor-banner');
     elements.forEach(element => {
       // Content already in view stays visible during choices and tab changes.
       if (element.getBoundingClientRect().top < window.innerHeight - 24) return visible(element);

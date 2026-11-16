@@ -1,0 +1,17 @@
+/* 11-levels.css — level strip. Live reference: label 160px under the hero, strip 32px under
+   the label (1120 wide, 46px tall), hairline under the strip. Ours is a still row, spaced on
+   the shared section rhythm. */
+
+.levels-label { margin: var(--section-gap) auto 0; width: min(1120px, 100% - 80px); text-align: center; font-size: 16px; line-height: 24px; letter-spacing: -0.16px; color: var(--color-stone); }
+.levels-row { width: min(1120px, 100% - 80px); margin: 32px auto 0; display: flex; align-items: center; justify-content: space-evenly; gap: 32px 48px; flex-wrap: wrap; }
+.level-mark { display: inline-flex; align-items: center; gap: 10px; height: 46px; color: var(--color-stone); opacity: 0.72; font-size: 27px; line-height: 1; letter-spacing: -0.04em; font-weight: var(--font-weight-medium); white-space: nowrap; transition: opacity var(--dur-fast) linear, color var(--dur-fast) linear; }
+.level-mark svg { width: 30px; height: 30px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.level-mark:hover { opacity: 1; color: var(--color-charcoal); }
+.levels-rule { margin-top: var(--section-gap); }
+
+@media (max-width: 767px) {
+  .levels-label, .levels-row { width: calc(100% - 32px); }
+  .levels-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); justify-items: center; gap: 16px 24px; }
+  .level-mark { font-size: 22px; gap: 8px; }
+  .level-mark svg { width: 24px; height: 24px; }
+}

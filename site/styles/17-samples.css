@@ -1,0 +1,33 @@
+/* 17-samples.css — "Sample lessons" (the live "Customer stories" slot). Measured at 1440:
+   40px/48px heading, cards 56px below, three 360px columns with 20px gaps, 360×277 image,
+   22px/26.4px title 20px below with a 4px inset, 12px meta 12px below. Images use 24px. */
+
+.samples { padding-block: var(--section-gap); }
+.samples-head { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.samples-grid { margin-top: 56px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.sample { display: block; }
+.sample-media { position: relative; display: block; aspect-ratio: 360 / 277; border-radius: var(--radius-images); overflow: hidden; background: var(--color-bone); isolation: isolate; }
+.sample-media::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: var(--shadow-subtle); pointer-events: none; }
+.sample-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease-out); }
+.sample:hover .sample-media img { transform: scale(1.03); }
+.sample-tag { position: absolute; left: 14px; bottom: 14px; display: inline-flex; align-items: center; height: 28px; padding: 4px 10px; border-radius: var(--radius-badges); background: rgba(255, 255, 255, 0.72); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: var(--color-tagline); font-size: 13px; line-height: 20px; letter-spacing: -0.005em; }
+.sample-title { display: block; margin-top: 20px; padding-inline: 4px; font-size: var(--text-card-title); line-height: 26.4px; letter-spacing: -0.02em; color: var(--color-charcoal); text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; text-decoration-thickness: 1px; transition: text-decoration-color var(--dur-fast) linear; }
+.sample:hover .sample-title { text-decoration-color: currentColor; }
+.sample-meta { margin-top: 12px; padding-inline: 4px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+@media (max-width: 1023px) {
+  .samples-grid { margin-top: 40px; gap: 12px; }
+  .sample-title { margin-top: 14px; font-size: 18px; line-height: 21.6px; }
+  .sample-meta { flex-wrap: wrap; row-gap: 6px; }
+  .sample-tag { left: 10px; bottom: 10px; font-size: 12px; height: 24px; padding: 2px 8px; }
+}
+/* 390: a horizontal scroll-snap row reads better than three 110px columns. */
+@media (max-width: 767px) {
+  .samples-head { flex-wrap: wrap; }
+  .samples-grid { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 78%; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); padding-bottom: 4px; scrollbar-width: none; }
+  .samples-grid::-webkit-scrollbar { display: none; }
+  .samples-grid > li { scroll-snap-align: start; }
+  /* Cards off to the right would only fade in mid-swipe; in the row they arrive together. */
+  .js .samples-grid > [data-reveal] { opacity: 1; transform: none; }
+  .sample-title { font-size: 20px; line-height: 24px; }
+}

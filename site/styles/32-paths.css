@@ -1,0 +1,118 @@
+/* 32-paths.css — /paths. Every selector is scoped under .page-paths. */
+
+.page-paths .paths-intro .t-display { max-width: 820px; }
+.page-paths .paths-intro-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 40px; }
+.page-paths .paths-sub { margin-top: 16px; max-width: 640px; font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-stone); }
+.page-paths .center .paths-sub { margin-inline: auto; }
+
+/* Sticky level switcher */
+.page-paths .paths-switch { position: sticky; top: calc(var(--nav-height) + 4px); z-index: 20; display: flex; justify-content: center; padding: 8px var(--gutter); pointer-events: none; }
+.page-paths .paths-switch-inner { pointer-events: auto; display: flex; gap: 2px; padding: 4px; border-radius: var(--radius-buttons); background: rgba(255, 255, 255, 0.82); box-shadow: var(--shadow-subtle); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.page-paths .paths-switch a { display: inline-flex; align-items: center; height: 36px; padding: 6px 18px; border-radius: var(--radius-buttons); color: var(--color-charcoal); font-size: 16px; line-height: 24px; letter-spacing: -0.01em; transition: background-color var(--dur-fast) linear, color var(--dur-fast) linear; }
+.page-paths .paths-switch a:hover { background: rgba(22, 15, 12, 0.06); }
+.page-paths .paths-switch a[aria-current="true"] { background: var(--color-espresso); color: var(--color-paper-white); }
+
+/* Anchor offsets. html already reserves nav + 16px (01-base.css); these add room for the sticky
+   level switcher (56px) and pull each level up so its tag lands just under the switcher. */
+.page-paths { --paths-anchor: calc(56px + 24px); }
+
+/* Placement */
+.page-paths .paths-placement { padding-top: 96px; scroll-margin-top: calc(var(--paths-anchor) - 96px); }
+.page-paths .paths-placement-grid { display: grid; grid-template-columns: minmax(0, 1fr) 496px; gap: 128px; margin-top: 48px; align-items: start; }
+.page-paths .paths-questions { display: grid; }
+.page-paths .paths-questions li { display: grid; grid-template-columns: 48px 1fr; gap: 16px; padding: 24px 0; border-top: 1px solid var(--color-hairline); }
+.page-paths .paths-questions li:last-child { border-bottom: 1px solid var(--color-hairline); }
+.page-paths .paths-num { font-family: var(--font-mono); font-size: 14px; line-height: 28px; color: var(--color-stone); }
+.page-paths .paths-questions h3 { font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-aubergine-ink); }
+.page-paths .paths-questions p { margin-top: 4px; font-size: 16px; line-height: 24px; letter-spacing: -0.01em; color: var(--color-ink-60); }
+.page-paths .paths-placement-side { position: sticky; top: calc(var(--nav-height) + 72px); display: grid; gap: 16px; }
+.page-paths .paths-qpanel { padding: 40px 32px; }
+.page-paths .paths-qcard { background: var(--color-paper-white); border-radius: var(--radius-cards); box-shadow: var(--shadow-subtle); padding: 20px; }
+.page-paths .paths-qcard-top { display: flex; align-items: center; justify-content: space-between; font-size: 12px; line-height: 16px; letter-spacing: 0.02em; color: var(--color-stone); }
+.page-paths .paths-qtitle { margin-top: 10px; font-size: 22px; line-height: 26.4px; letter-spacing: -0.02em; color: var(--color-charcoal); }
+.page-paths .paths-chips { display: grid; gap: 8px; margin-top: 16px; }
+.page-paths .paths-chips li { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius-xl); border: 1px solid rgba(22, 15, 12, 0.08); background: var(--color-paper-white); transition: border-color var(--dur) var(--ease-out), background-color var(--dur) var(--ease-out); }
+.page-paths .paths-chips li.is-picked { border-color: var(--color-espresso); background: var(--color-linen); }
+.page-paths .paths-chip-dot { flex: none; width: 16px; height: 16px; margin-top: 2px; border-radius: 50%; border: 1px solid var(--color-stone); position: relative; }
+.page-paths .is-picked .paths-chip-dot { border-color: var(--color-espresso); }
+.page-paths .is-picked .paths-chip-dot::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--color-espresso); }
+.page-paths .paths-chips b { display: block; font-weight: var(--font-weight-medium); font-size: 15px; line-height: 20px; letter-spacing: -0.01em; color: var(--color-aubergine-ink); }
+.page-paths .paths-chips small { display: block; margin-top: 2px; font-size: 13px; line-height: 18px; color: var(--color-stone); }
+.page-paths .paths-rule { padding: 24px; }
+.page-paths .paths-rule-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.page-paths .paths-rule-head h3 { font-size: 20px; line-height: 28px; letter-spacing: -0.02em; }
+.page-paths .paths-rule p { font-size: 16px; line-height: 24px; letter-spacing: -0.01em; color: var(--color-charcoal); }
+.page-paths .paths-rule p + p { margin-top: 8px; }
+.page-paths .paths-rule em { font-style: normal; color: var(--color-aubergine-ink); }
+.page-paths .paths-rule-note { color: var(--color-stone) !important; }
+
+/* Levels */
+.page-paths .paths-levels { margin-top: 24px; }
+.page-paths .paths-level { padding-block: 112px; scroll-margin-top: calc(var(--paths-anchor) - 112px); }
+.page-paths .paths-level + .paths-level { padding-top: 0; }
+.page-paths .paths-level + .paths-level .paths-level-grid { padding-top: 112px; background: linear-gradient(var(--color-hairline), var(--color-hairline)) center top / calc(100% - 2 * var(--gutter)) 1px no-repeat; }
+.page-paths .paths-level-grid { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 80px; align-items: start; }
+.page-paths .paths-level-head { position: sticky; top: calc(var(--nav-height) + 80px); }
+.page-paths .paths-level-head .tag { margin-bottom: 20px; }
+.page-paths .paths-blurb { margin-top: 12px; font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-stone); }
+.page-paths .paths-level-meta { display: flex; align-items: flex-end; gap: 12px; margin-top: 32px; font-size: 14px; line-height: 21px; color: var(--color-stone); }
+.page-paths .paths-steps { display: inline-flex; align-items: flex-end; gap: 3px; height: 26px; }
+.page-paths .paths-steps i { width: 8px; border-radius: 2px; background: rgba(22, 15, 12, 0.1); }
+.page-paths .paths-steps i.is-on { background: var(--color-charcoal); }
+
+/* The trail: a snaking two-column list with an SVG line drawn behind the cards. */
+.page-paths .paths-trail { position: relative; }
+.page-paths .paths-trail-line { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.page-paths .paths-trail-line path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.page-paths .paths-trail-bg { stroke: rgba(22, 15, 12, 0.08); stroke-width: 1.5; stroke-dasharray: 2 6; }
+.page-paths .paths-trail-draw { stroke: var(--color-warm-ash); stroke-width: 1.5; }
+.page-paths .paths-stops { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 64px; row-gap: 48px; }
+.page-paths .paths-stop { grid-row: var(--row); grid-column: var(--col); position: relative; display: grid; gap: 6px; align-content: start; min-height: 132px; padding: 20px 20px 18px 48px; background: var(--color-paper-white); border-radius: var(--radius-cards); box-shadow: var(--shadow-subtle); }
+.page-paths .paths-stop-dot { position: absolute; left: 20px; top: 24px; width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--color-warm-ash); background: var(--color-paper-white); }
+.page-paths .paths-stop:first-child .paths-stop-dot { background: var(--color-espresso); border-color: var(--color-espresso); }
+.page-paths .paths-stop-num { font-family: var(--font-mono); font-size: 12px; line-height: 16px; letter-spacing: 0.02em; color: var(--color-stone); }
+.page-paths .paths-stop-title { font-size: 20px; line-height: 26px; letter-spacing: -0.02em; color: var(--color-aubergine-ink); }
+.page-paths .paths-stop-src { margin-top: auto; padding-top: 10px; display: inline-flex; align-items: center; gap: 4px; justify-self: start; font-size: 13px; line-height: 18px; color: var(--color-stone); text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px; transition: color var(--dur-fast) linear, text-decoration-color var(--dur-fast) linear; }
+.page-paths .paths-stop-src:hover { color: var(--color-charcoal); text-decoration-color: currentColor; }
+.page-paths .paths-stop-src .icon { stroke-width: 1.5; }
+
+/* The path keeps going */
+.page-paths .paths-more { padding-top: 0; }
+.page-paths .paths-more-panel { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 64px; align-items: center; padding: 64px; }
+.page-paths .paths-more-copy .tag { margin-bottom: 20px; }
+.page-paths .paths-more-copy p { margin-top: 16px; max-width: 520px; font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-stone); }
+.page-paths .paths-more-art { display: grid; gap: 10px; }
+.page-paths .paths-more-card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: var(--radius-cards); background: var(--color-paper-white); box-shadow: var(--shadow-subtle); font-size: 16px; line-height: 22px; letter-spacing: -0.01em; color: var(--color-charcoal); }
+.page-paths .paths-more-card.is-done { opacity: 0.55; transform: scale(0.97); }
+.page-paths .paths-more-card.is-new .label-mono { margin-left: auto; }
+
+/* Closing CTA */
+
+@media (max-width: 1199px) {
+  .page-paths .paths-level-grid { grid-template-columns: 240px minmax(0, 1fr); gap: 48px; }
+  .page-paths .paths-stops { column-gap: 48px; }
+  .page-paths .paths-placement-grid { grid-template-columns: minmax(0, 1fr) 440px; gap: 64px; }
+}
+@media (max-width: 1023px) {
+  .page-paths .paths-placement-grid { grid-template-columns: 1fr; gap: 48px; }
+  .page-paths .paths-placement-side { position: static; grid-template-columns: 1fr 1fr; align-items: start; }
+  .page-paths .paths-level-grid { grid-template-columns: 1fr; gap: 40px; }
+  .page-paths .paths-level-head { position: static; }
+  .page-paths .paths-stops { column-gap: 40px; }
+  .page-paths .paths-more-panel { grid-template-columns: 1fr; padding: 48px; gap: 40px; }
+}
+@media (max-width: 767px) {
+  .page-paths .paths-switch a { padding: 6px 12px; font-size: 14px; }
+  .page-paths .paths-placement { padding-top: 64px; scroll-margin-top: calc(var(--paths-anchor) - 64px); }
+  .page-paths .paths-placement-side { grid-template-columns: 1fr; }
+  .page-paths .paths-qpanel { padding: 24px 16px; }
+  .page-paths .paths-questions li { grid-template-columns: 36px 1fr; padding: 20px 0; }
+  .page-paths .paths-questions h3 { font-size: 18px; line-height: 24px; }
+  .page-paths .paths-level { padding-block: 80px; scroll-margin-top: calc(var(--paths-anchor) - 80px); }
+  .page-paths .paths-level + .paths-level .paths-level-grid { padding-top: 80px; }
+  .page-paths .paths-stops { grid-template-columns: 1fr; row-gap: 20px; }
+  .page-paths .paths-stop { grid-row: auto; grid-column: 1; min-height: 0; }
+  .page-paths .paths-stop-title { font-size: 18px; line-height: 24px; }
+  .page-paths .paths-more-panel { padding: 32px 20px; }
+  .page-paths .paths-sub, .page-paths .paths-blurb, .page-paths .paths-more-copy p { font-size: 18px; line-height: 26px; }
+}

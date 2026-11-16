@@ -1,0 +1,85 @@
+/* 31-lesson.css — /lessons/<slug>: a calm editorial reading page. Scoped to .page-lesson. */
+
+.page-lesson .lesson-progress { position: fixed; top: var(--nav-height); left: 0; right: 0; height: 2px; z-index: 49; pointer-events: none; }
+.page-lesson .lesson-progress i { display: block; height: 100%; background: var(--color-espresso); transform-origin: left; transform: scaleX(var(--lesson-progress, 0)); }
+
+.page-lesson .lesson-intro { padding-bottom: 56px; }
+.page-lesson .lesson-crumbs { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; font-size: 14px; line-height: 21px; color: var(--color-stone); }
+.page-lesson .lesson-crumbs a { color: var(--color-charcoal); }
+.page-lesson .lesson-crumbs [aria-current] { color: var(--color-stone); }
+.page-lesson .lesson-intro h1 { max-width: 960px; }
+.page-lesson .lesson-meta { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; font-size: 16px; line-height: 24px; letter-spacing: -0.01em; color: var(--color-charcoal); }
+.page-lesson .lesson-meta > span:not(.label-mono) { display: inline-flex; align-items: center; gap: 8px; }
+.page-lesson .lesson-meta .icon { color: var(--color-stone); }
+
+.page-lesson .lesson-figure { aspect-ratio: 16 / 7; margin: 0; }
+.page-lesson .lesson-figure img { width: 100%; height: 100%; object-fit: cover; }
+
+.page-lesson .lesson-layout { display: grid; grid-template-columns: 240px minmax(0, 680px); justify-content: space-between; gap: 64px; padding-block: 96px var(--section-gap); }
+.page-lesson .lesson-toc { position: sticky; top: calc(var(--nav-height) + 32px); align-self: start; }
+.page-lesson .lesson-toc-label { font-size: 14px; line-height: 21px; color: var(--color-stone); margin-bottom: 12px; }
+.page-lesson .lesson-toc ol { display: grid; gap: 2px; border-left: 1px solid var(--color-hairline); }
+.page-lesson .lesson-toc a { position: relative; display: grid; grid-template-columns: 28px 1fr; padding: 8px 0 8px 16px; font-size: 15px; line-height: 21px; letter-spacing: -0.01em; color: var(--color-stone); transition: color var(--dur-fast) linear; }
+.page-lesson .lesson-toc a::before { content: ''; position: absolute; left: -1px; top: 8px; bottom: 8px; width: 1px; background: var(--color-espresso); transform: scaleY(0); transition: transform var(--dur) var(--ease-out); }
+.page-lesson .lesson-toc a:hover { color: var(--color-charcoal); }
+.page-lesson .lesson-toc a.is-current { color: var(--color-aubergine-ink); }
+.page-lesson .lesson-toc a.is-current::before { transform: scaleY(1); }
+.page-lesson .lesson-toc-n { font-family: var(--font-mono); font-size: 12px; line-height: 21px; }
+
+.page-lesson .lesson-prose { display: grid; gap: 72px; }
+.page-lesson .lesson-section { display: grid; gap: 16px; }
+/* Anchor targets land 32px under the nav: html already reserves nav + 16px (01-base.css). */
+.page-lesson [data-toc-section] { scroll-margin-top: 16px; }
+.page-lesson .lesson-section p { font-size: 20px; line-height: 1.6; letter-spacing: -0.015em; color: var(--color-charcoal); }
+
+.page-lesson .lesson-turn { display: grid; grid-template-columns: 48px 1fr; gap: 20px; }
+.page-lesson .lesson-turn-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--color-bone); display: grid; place-items: center; color: var(--color-smoke); }
+.page-lesson .lesson-turn p { margin-top: 10px; font-size: 18px; line-height: 1.55; letter-spacing: -0.01em; color: var(--color-charcoal); }
+.page-lesson .lesson-turn .lesson-turn-note { font-size: 14px; line-height: 21px; color: var(--color-stone); }
+
+.page-lesson .lesson-quiz { padding: 40px; display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+.page-lesson .lesson-quiz h2 { margin-top: 12px; }
+.page-lesson .lesson-quiz p { margin-top: 10px; max-width: 420px; font-size: 16px; line-height: 24px; color: var(--color-ink-60); }
+
+.page-lesson .lesson-source { display: flex; align-items: center; gap: 10px; padding-top: 24px; border-top: 1px solid var(--color-hairline); font-size: 16px; line-height: 24px; color: var(--color-stone); }
+.page-lesson .lesson-source a { color: var(--color-charcoal); }
+
+.page-lesson .lesson-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding-bottom: var(--section-gap); }
+.page-lesson .lesson-nav-card { display: flex; align-items: center; gap: 20px; padding: 28px 32px; background: var(--color-paper-white); border-radius: var(--radius-cards); box-shadow: var(--shadow-subtle); transition: background-color var(--dur-fast) linear; }
+.page-lesson .lesson-nav-card:hover { background: rgba(255, 255, 255, 0.6); }
+.page-lesson .lesson-nav-card.is-next { grid-column: 2; justify-content: flex-end; text-align: right; }
+.page-lesson .lesson-nav-text { display: grid; gap: 8px; min-width: 0; }
+.page-lesson .lesson-nav-title { font-size: 24px; line-height: 1.25; letter-spacing: -0.03em; color: var(--color-charcoal); }
+.page-lesson .lesson-nav-arrow { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--color-linen); color: var(--color-charcoal); transition: transform var(--dur-fast) var(--ease-out); }
+.page-lesson .is-prev:hover .lesson-nav-arrow { transform: translateX(-3px); }
+.page-lesson .is-next:hover .lesson-nav-arrow { transform: translateX(3px); }
+
+/* Practice-prompt builder (Ask better questions) */
+.page-lesson .lesson-lab { display: grid; gap: 24px; }
+.page-lesson .lesson-lab-head p { margin-top: 8px; font-size: 16px; line-height: 24px; letter-spacing: -0.01em; color: var(--color-ink-60); }
+.page-lesson .lesson-lab-form { display: grid; grid-template-columns: 1fr 1fr 120px; gap: 16px; }
+.page-lesson .lesson-lab-preview { display: grid; gap: 10px; padding: 20px; border-radius: var(--radius-inputs); background: var(--color-linen); box-shadow: var(--shadow-subtle); }
+.page-lesson .lesson-lab-preview p { font-size: 18px; line-height: 1.5; letter-spacing: -0.01em; color: var(--color-charcoal); }
+.page-lesson .lesson-lab-preview p.is-empty { color: var(--color-stone); }
+
+@media (max-width: 1023px) {
+  .page-lesson .lesson-layout { grid-template-columns: 1fr; gap: 40px; padding-top: 64px; }
+  .page-lesson .lesson-toc { position: static; }
+  .page-lesson .lesson-toc ol { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); border-left: 0; border-top: 1px solid var(--color-hairline); padding-top: 4px; }
+  .page-lesson .lesson-toc a { padding-left: 0; }
+  .page-lesson .lesson-toc a::before { display: none; }
+}
+@media (max-width: 767px) {
+  .page-lesson .lesson-figure { aspect-ratio: 4 / 3; }
+  .page-lesson .lesson-meta { gap: 10px 18px; font-size: 14px; }
+  .page-lesson .lesson-section p { font-size: 18px; }
+  .page-lesson .lesson-prose { gap: 56px; }
+  .page-lesson .lesson-turn { grid-template-columns: 1fr; gap: 16px; }
+  .page-lesson .lesson-quiz { padding: 24px; }
+  .page-lesson .lesson-nav { grid-template-columns: 1fr; gap: 12px; }
+  .page-lesson .lesson-nav-empty { display: none; }
+  .page-lesson .lesson-nav-card { padding: 20px; gap: 16px; }
+  .page-lesson .lesson-nav-card.is-next { grid-column: auto; justify-content: space-between; text-align: left; }
+  .page-lesson .lesson-nav-title { font-size: 20px; }
+  .page-lesson .lesson-lab-form { grid-template-columns: 1fr; }
+}

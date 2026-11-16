@@ -1,0 +1,17 @@
+/* 38-references.css — /references: the numbered source list inside the legal layout. */
+
+.page-references .ref-list { display: grid; gap: 12px; margin-top: 24px; counter-reset: ref; }
+.page-references .legal-section .ref-item { padding: 20px 24px 20px 64px; border-radius: var(--radius-cards); background: var(--color-paper-white); box-shadow: var(--shadow-subtle); counter-increment: ref; }
+.page-references .legal-section .ref-item::before { content: counter(ref, decimal-leading-zero); left: 24px; top: 23px; width: auto; height: auto; background: none; font-family: var(--font-mono); font-size: 12px; line-height: 20px; letter-spacing: 0.02em; color: var(--color-stone); }
+.page-references .legal-section .ref-item a { display: inline; font-size: 18px; line-height: 1.4; letter-spacing: -0.02em; color: var(--color-aubergine-ink); text-decoration: none; background-image: linear-gradient(currentColor, currentColor); background-size: 0 1px; background-position: 0 100%; background-repeat: no-repeat; transition: background-size var(--dur) var(--ease-out); }
+.page-references .legal-section .ref-item a:hover { background-size: 100% 1px; }
+.page-references .legal-section .ref-item p { margin-top: 6px; font-size: 16px; line-height: 1.5; color: var(--color-stone); }
+.page-references .ref-arrow { color: var(--color-stone); }
+.page-references .legal-section li strong { font-weight: var(--font-weight-medium); color: var(--color-aubergine-ink); }
+
+@media (max-width: 767px) {
+  .page-references .legal-section .ref-item { padding: 16px 16px 16px 48px; }
+  .page-references .legal-section .ref-item::before { left: 16px; top: 19px; }
+  .page-references .legal-section .ref-item a { font-size: 16px; }
+  .page-references .legal-section .ref-item p { font-size: 14px; }
+}

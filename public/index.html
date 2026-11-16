@@ -1,17 +1,276 @@
 <!doctype html>
-<!-- index.html is the only page of the app. It is nearly empty on purpose: public/app.mjs draws every screen inside #app. -->
 <html lang="en">
 <head>
-  <!-- viewport makes the page fit phone screens; theme-color tints the browser toolbar on phones; description is the summary search engines show. -->
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f9f8f3"><meta name="description" content="A little curiosity. A world of possibility. Discover a personalized way to learn AI with Fairylearn AI.">
-  <title>Fairylearn AI — A little curiosity goes a long way.</title>
-  <!-- The logo doubles as the browser-tab icon and is preloaded so it appears without a delay. -->
-  <link rel="icon" type="image/png" href="/logo.png">
-  <link rel="preload" href="/logo.png" as="image">
-  <!-- type="module" lets app.mjs use import/export and top-level await. Module scripts wait for the page to be parsed before they run, so #app already exists. -->
-  <link rel="stylesheet" href="/styles.css"><script type="module" src="/app.mjs"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fairylearn AI — A little curiosity goes a long way.</title>
+<meta name="description" content="Fairylearn AI finds where you are, then lays a gentle path of short lessons, quizzes and an AI guide for curious high school students. Free to start.">
+<meta name="theme-color" content="#f7f7f5">
+<link rel="canonical" href="https://fairylearn-ai.vercel.app/">
+<meta property="og:title" content="Fairylearn AI — A little curiosity goes a long way.">
+<meta property="og:description" content="Fairylearn AI finds where you are, then lays a gentle path of short lessons, quizzes and an AI guide for curious high school students. Free to start.">
+<meta property="og:image" content="https://fairylearn-ai.vercel.app/assets/img/hero-16x9.webp">
+<meta property="og:type" content="website">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/img/hero-16x9.webp" as="image" type="image/webp" media="(min-width: 768px)" fetchpriority="high">
+<link rel="preload" href="/assets/img/hero-4x5.webp" as="image" type="image/webp" media="(max-width: 767px)" fetchpriority="high">
+<link rel="stylesheet" href="/assets/site.css">
+<script>document.documentElement.classList.add('js');if(/(^|[#&])(access_token|error)=/.test(location.hash)&&location.pathname!=='/app')location.replace('/app'+location.hash);</script>
+
 </head>
-<!-- #app holds the current screen. #toast shows short messages; role="status" with aria-live="polite" makes screen readers announce them. -->
-<body><div id="app"></div><div id="toast" role="status" aria-live="polite"></div></body>
+<body class="page-home">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-nav" data-nav>
+  <div class="nav-blur" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="nav-wash" aria-hidden="true"></div>
+  <nav class="nav-inner" aria-label="Main">
+    <a class="brand" href="/" aria-label="Fairylearn AI home"><svg class="brand-mark" viewBox="0 0 26 26" aria-hidden="true" focusable="false"><path d="M13 2.5c.7 5.2 2.8 7.3 8 8-5.2.7-7.3 2.8-8 8-.7-5.2-2.8-7.3-8-8 5.2-.7 7.3-2.8 8-8Z"/><path d="M4.5 23.5c3-1.6 6-1.6 8.5 0s5.5 1.6 8.5 0"/></svg><span>fairylearn</span></a>
+    <ul class="nav-links"><li class="nav-item" data-nav-item><a class="nav-link" href="/lessons" aria-haspopup="true" aria-expanded="false">Learn</a><div class="nav-menu"><div class="nav-menu-col"><span class="nav-menu-label">Learn</span><a class="nav-menu-item" href="/lessons"><b>Lessons</b><span>Three free essentials to start</span></a><a class="nav-menu-item" href="/paths"><b>Paths</b><span>Four levels, one winding path</span></a><a class="nav-menu-item" href="/quiz"><b>Quiz</b><span>See what stuck, one question at a time</span></a></div><div class="nav-menu-col"><span class="nav-menu-label">Levels</span><a class="nav-menu-item" href="/paths#starter"><b>Starter</b><span>Start with the very basics.</span></a><a class="nav-menu-item" href="/paths#beginner"><b>Beginner</b><span>Turn curiosity into confidence.</span></a><a class="nav-menu-item" href="/paths#medium"><b>Medium</b><span>Put your knowledge to work.</span></a><a class="nav-menu-item" href="/paths#expert"><b>Expert</b><span>Explore what’s possible next.</span></a></div></div></li><li class="nav-item"><a class="nav-link" href="/pricing">Pricing</a></li><li class="nav-item" data-nav-item><a class="nav-link" href="/about" aria-haspopup="true" aria-expanded="false">Company</a><div class="nav-menu has-art"><div class="nav-menu-col"><a class="nav-menu-item" href="/about"><b>About</b><span>Why Fairylearn exists</span></a><a class="nav-menu-item" href="/references"><b>Sources &amp; credits</b><span>Where our lessons come from</span></a><a class="nav-menu-item" href="/app"><b>Open the app</b><span>Your path, guide and progress</span></a></div><div class="nav-menu-art" aria-hidden="true"><svg viewBox="0 0 160 120"><path d="M8 104c22-4 30-18 46-30s34-6 44-22 6-30 30-38"/><circle cx="128" cy="14" r="4"/><circle cx="54" cy="74" r="2.5"/><circle cx="98" cy="52" r="2.5"/><path d="M128 14v-10l10 4-10 4"/></svg></div></div></li><li class="nav-item" data-nav-item><a class="nav-link" href="/lessons" aria-haspopup="true" aria-expanded="false">Resources</a><div class="nav-menu has-art"><div class="nav-menu-col"><a class="nav-menu-item" href="/lessons/how-does-ai-learn"><b>Sample lesson</b><span>How does AI learn?</span></a><a class="nav-menu-item" href="/privacy"><b>Privacy</b><span>What we keep, and why</span></a><a class="nav-menu-item" href="/terms"><b>Terms</b><span>The simple rules</span></a></div><div class="nav-menu-art" aria-hidden="true"><svg viewBox="0 0 160 120"><path d="M80 10 44 24v26c0 24 15 42 36 50 21-8 36-26 36-50V24z"/><path d="M80 34c1.6 11 5.6 15 16.5 16.5-10.9 1.5-14.9 5.5-16.5 16.5-1.6-11-5.6-15-16.5-16.5C74.4 49 78.4 45 80 34Z"/></svg></div></div></li></ul>
+    <div class="nav-right">
+      <a class="nav-login" href="/login">Log in</a>
+      <a class="btn btn-dark btn-sm" href="/signup"><span>Start free</span></a>
+      <button class="nav-burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu" data-burger><i></i><i></i></button>
+    </div>
+  </nav>
+</header>
+<div class="mobile-menu" id="mobile-menu" data-mobile-menu>
+  <div class="mobile-menu-group"><span>Learn</span><a href="/lessons">Lessons</a><a href="/paths">Paths</a><a href="/quiz">Quiz</a></div><div class="mobile-menu-group"><a href="/pricing">Pricing</a></div><div class="mobile-menu-group"><span>Company</span><a href="/about">About</a><a href="/references">Sources &amp; credits</a><a href="/app">Open the app</a></div><div class="mobile-menu-group"><span>Resources</span><a href="/lessons/how-does-ai-learn">Sample lesson</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
+  <div class="mobile-menu-actions"><a class="btn btn-dark btn-md btn-block" href="/signup"><span>Start free</span></a><a class="btn btn-outline btn-block" href="/login"><span>Log in</span></a></div>
+</div>
+<main id="main">
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-art">
+    <picture>
+      <source media="(max-width: 767px)" srcset="/assets/img/hero-4x5.webp" width="1080" height="1350">
+      <img class="hero-img" src="/assets/img/hero-16x9.webp" width="2400" height="1350" alt="A watercolor landscape at dawn: a pale path winds through sage meadows toward misty lavender hills under soft lavender clouds." loading="eager" decoding="async" fetchpriority="high">
+    </picture>
+  </div>
+  <div class="hero-content">
+    <a class="pill-glass" href="/quiz"><span>Every free lesson ends with a quiz</span><svg class="chev" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3.5 10.5 8 6 12.5"/></svg></a>
+    <h1 class="t-display hero-title" id="hero-title">A little curiosity goes a long way</h1>
+    <p class="hero-sub">Fairylearn finds where you are, then lays out a gentle path of short AI lessons, quizzes and a guide that answers back.</p>
+    <a class="btn btn-dark btn-hero" href="/signup"><span>Find my path</span></a>
+  </div>
+</section>
+<section class="levels" aria-labelledby="levels-label">
+  <p class="levels-label" id="levels-label">Four levels. Start wherever you are.</p>
+  <ul class="levels-row"><li><a class="level-mark" href="/paths#starter" title="Start with the very basics."><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21v-8.5"/><path d="M12 12.5c0-4.2-2.6-6.8-7.2-6.8 0 4.2 2.6 6.8 7.2 6.8Z"/><path d="M12 15c0-3.6 2.3-5.7 6.7-5.7 0 3.6-2.3 5.7-6.7 5.7Z"/></svg><span>Starter</span></a></li><li><a class="level-mark" href="/paths#beginner" title="Turn curiosity into confidence."><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5c.8 5.6 3 7.9 8.5 8.7-5.5.8-7.7 3-8.5 8.6-.8-5.6-3-7.8-8.5-8.6 5.5-.8 7.7-3.1 8.5-8.7Z"/></svg><span>Beginner</span></a></li><li><a class="level-mark" href="/paths#medium" title="Put your knowledge to work."><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 20.5h5.5V15H14V9.5h5.5V4H21"/><circle cx="3" cy="20.5" r=".6"/></svg><span>Medium</span></a></li><li><a class="level-mark" href="/paths#expert" title="Explore what’s possible next."><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m2 20.5 7.2-12.2 4.1 6.7 2.6-3.6L21.8 20.5z"/><path d="M9.2 8.3V2.8l4.2 1.6-4.2 1.6"/></svg><span>Expert</span></a></li></ul>
+  <div class="container"><hr class="hairline levels-rule"></div>
+</section>
+<section class="stats" aria-labelledby="stats-title">
+  <div class="container">
+    <h2 class="t-heading-lg stats-title" id="stats-title" data-reveal>Lessons do the explaining. <br>You do the wondering.</h2>
+    <dl class="stats-row">
+      <div class="stat" data-reveal data-reveal-delay="0.08">
+        <dt class="stat-label">Free essentials</dt>
+        <dd class="stat-value"><span data-count="3">3</span></dd>
+      </div>
+      <div class="stat" data-reveal data-reveal-delay="0.16">
+        <dt class="stat-label">Levels to grow through</dt>
+        <dd class="stat-value"><span data-count="4">4</span></dd>
+      </div>
+      <div class="stat" data-reveal data-reveal-delay="0.24">
+        <dt class="stat-label">About 2 minutes to start</dt>
+        <dd class="stat-value"><span data-count="2">2</span><span class="stat-unit"> min</span></dd>
+      </div>
+    </dl>
+    <hr class="hairline stats-rule">
+    <ul class="stats-cols">
+      <li class="stats-col" data-reveal data-reveal-delay="0.00">
+        <svg class="icon icon-32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>
+        <h3 class="stats-col-title">Start where you are</h3>
+        <p class="stats-col-text">Five quick questions find your level, from brand new to ready for more.</p>
+      </li>
+      <li class="stats-col" data-reveal data-reveal-delay="0.08">
+        <svg class="icon icon-32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 19.5h5v-5h5v-5h5v-5h2"/></svg>
+        <h3 class="stats-col-title">Learn in small steps</h3>
+        <p class="stats-col-text">Short lessons, real examples and a quick check at the end of each one.</p>
+      </li>
+      <li class="stats-col" data-reveal data-reveal-delay="0.16">
+        <svg class="icon icon-32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5.5h16v11H9.5L5.5 20v-3.5H4z"/></svg>
+        <h3 class="stats-col-title">Practice with a guide</h3>
+        <p class="stats-col-text">Hints before answers, and a patient AI guide whenever a lesson feels tricky.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+<section class="sky" aria-labelledby="sky-title">
+  <div class="sky-art" aria-hidden="true" data-sky-parallax><img class="sky-img" src="/assets/img/sky.webp" width="2400" height="1240" alt="" loading="lazy" decoding="async" sizes="100vw"></div>
+  <div class="sky-inner">
+    <div data-reveal><span class="chip-glass"><i class="signal-square" aria-hidden="true"></i>AI guide</span></div>
+    <h2 class="sky-title" id="sky-title" data-reveal data-reveal-delay="0.06">A guide that answers back.</h2>
+    <p class="sky-text" data-reveal data-reveal-delay="0.12">Stuck on a lesson? Ask in your own words. Your guide explains it another way, offers a hint before the answer, and never asks for personal details.</p>
+    <div class="sky-action" data-reveal data-reveal-delay="0.18"><a class="btn btn-white" href="/lessons#guide"><span>Meet your guide</span><svg class="chev" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3.5 10.5 8 6 12.5"/></svg></a></div>
+  </div>
+</section>
+<div class="modules" id="product">
+<section class="module" aria-labelledby="mv-find-title"><div class="module-inner">
+  <header class="section-head" data-reveal><span class="tag">Find your path</span><h2 class="t-heading-lg" id="mv-find-title">Five small questions. One path that fits.</h2><a class="btn btn-outline" href="/paths"><span>Explore</span><svg class="chev" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3.5 10.5 8 6 12.5"/></svg></a><p class="section-sub">Tell us what you know and how you like to learn. We’ll find your starting level.</p></header>
+  <div class="module-row"><div class="module-visual" data-reveal><div class="panel mv mv-find" id="mv-find" aria-hidden="true"><div class="mv-stage">
+    <svg class="mv-arrow" viewBox="0 0 496 496" aria-hidden="true"><path d="M124 200 C 124 240, 142 266, 182 268"/><path class="mv-arrow-head" d="M175 262.5 L182 268 L175 273.5"/><path d="M404 324 C 404 376, 392 404, 354 406"/><path class="mv-arrow-head" d="M361 400.5 L354 406 L361 411.5"/></svg>
+    <div class="mv-card mv-q" data-feature-step="0 1">
+      <div class="mv-swap" data-feature-step="0"><div class="mv-card-top"><span class="mv-step">Question 1 of 5</span></div><p class="mv-q-title">How well do you know AI?</p><ul class="mv-options"><li class="mv-option"><i class="mv-radio" aria-hidden="true"></i><span>A fresh start</span></li><li class="mv-option is-selected"><i class="mv-radio" aria-hidden="true"></i><span>A little curious</span></li></ul></div>
+      <div class="mv-swap" data-feature-step="1"><div class="mv-card-top"><span class="mv-step">Question 2 of 5</span></div><p class="mv-q-title">A little knowledge check</p><ul class="mv-options"><li class="mv-option"><i class="mv-radio" aria-hidden="true"></i><span>Searches the internet</span></li><li class="mv-option is-selected"><i class="mv-radio" aria-hidden="true"></i><span>Creates from learned patterns</span></li></ul></div>
+    </div>
+    <div class="mv-card mv-level" data-feature-step="2">
+      <div class="mv-card-top"><span class="mv-ico"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><span class="mv-muted">Your starting level</span><span class="label-mono">Ready</span></div>
+      <p class="mv-level-name">Beginner</p>
+      <ol class="mv-steps"><li class="is-past" style="--h:0.75em"><i></i><span>Starter</span></li><li class="is-current" style="--h:1.25em"><i></i><span>Beginner</span></li><li class="" style="--h:1.75em"><i></i><span>Medium</span></li><li class="" style="--h:2.25em"><i></i><span>Expert</span></li></ol>
+    </div>
+    <div class="mv-card mv-mini-path" data-feature-step="3">
+      <div class="mv-card-top"><span class="mv-ico"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="6" cy="18" r="2.25"/><circle cx="18" cy="6" r="2.25"/><path d="M8.25 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.75"/></svg></span><span class="mv-muted">Your path</span><span class="mv-chip"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 11.5A8 8 0 0 0 6 6.5L4 8.5M4 4v4.5h4.5"/><path d="M4 12.5a8 8 0 0 0 14 5l2-2M20 20v-4.5h-4.5"/></svg>Update answers</span></div>
+      <ol><li class="is-current"><span class="mv-num">01</span><span>A closer look at generative AI</span></li><li class=""><span class="mv-num">02</span><span>The art of a good prompt</span></li><li class=""><span class="mv-num">03</span><span>Using AI thoughtfully</span></li></ol>
+    </div>
+  </div></div></div><div class="module-list" data-reveal data-reveal-delay="0.1"><div class="features" data-features data-interval="4500" data-target="#mv-find"><div class="feature is-open" data-feature="0"><button class="feature-title" type="button" aria-expanded="true"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><circle cx="4.75" cy="6.5" r=".75"/><circle cx="4.75" cy="12" r=".75"/><circle cx="4.75" cy="17.5" r=".75"/></svg><span>Five quick questions</span></button><div class="feature-body"><div><p>About two minutes, and there are no wrong answers. Just tell us where you are.</p></div></div><span class="feature-progress" aria-hidden="true"><i></i></span></div><div class="feature" data-feature="1"><button class="feature-title" type="button" aria-expanded="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg><span>A gentle knowledge check</span></button><div class="feature-body"><div><p>One small question checks what you already know, so you start in the right place.</p></div></div><span class="feature-progress" aria-hidden="true"><i></i></span></div><div class="feature" data-feature="2"><button class="feature-title" type="button" aria-expanded="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg><span>Your starting level</span></button><div class="feature-body"><div><p>Starter, Beginner, Medium or Expert. Your path begins exactly there.</p></div></div><span class="feature-progress" aria-hidden="true"><i></i></span></div><div class="feature" data-feature="3"><button class="feature-title" type="button" aria-expanded="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 11.5A8 8 0 0 0 6 6.5L4 8.5M4 4v4.5h4.5"/><path d="M4 12.5a8 8 0 0 0 14 5l2-2M20 20v-4.5h-4.5"/></svg><span>Change it anytime</span></button><div class="feature-body"><div><p>Update your answers whenever you like and your path rebuilds around you.</p></div></div><span class="feature-progress" aria-hidden="true"><i></i></span></div></div></div></div>
+</div></section>
+<section class="module" aria-labelledby="mv-learn-title"><div class="module-inner">
+  <header class="section-head" data-reveal><span class="tag">Learn</span><h2 class="t-heading-lg" id="mv-learn-title">Small lessons along a winding path.</h2><a class="btn btn-outline" href="/lessons"><span>Explore</span><svg class="chev" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3.5 10.5 8 6 12.5"/></svg></a><p class="section-sub">Short, friendly lessons that build on each other, at a pace that feels like you.</p></header>
+  <div class="module-row is-reverse"><div class="module-list" data-reveal data-reveal-delay="0.1"><div class="features" data-features data-interval="4500" data-target="#mv-learn"><div class="feature is-open" data-feature="0"><button class="feature-title" type="button" aria-expanded="true"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6.5c-1.8-1.3-4.5-2-8-2v13c3.5 0 6.2.7 8 2 1.8-1.3 4.5-2 8-2v-13c-3.5 0-6.2.7-8 2Z"/><path d="M12 6.5v13"/></svg><span>Three free essentials</span></button><div class="feature-body"><div><p>Start learning right away, no account needed. Each one ends with a quick quiz.</p></div></div><span class="feature-progress" aria-hidden="true"><i></i></span></div><div class="feature" data-feature="1"><button class="feature-title" type="button" aria-expanded="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7Z"/><path d="M19 16.5c.25 1.5.75 2 2.25 2.25-1.5.25-2 .75-2.25 2.25-.25-1.5-.75-2-2.25-2.25 1.5-.25 2-.75 2.25-2.25Z"/></svg><span>Lessons shaped by AI</span></button><div class="feature-body"><div><p>With a free account, AI picks and writes lessons for your level and goals.</p></div></div><span class="feature-progress" aria-hidden="true"><i></i></span></div><div class="feature" data-feature="2"><button class="feature-title" type="button" aria-expanded="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span>Your own pace</span></button><div class="feature-body"><div><p>Five, ten, twenty or thirty minutes a day. Whatever leaves room for wonder.</p></div></div><span class="feature-progress" aria-hidden="true"><i></i></span></div><div class="feature" data-feature="3"><button class="feature-title" type="button" aria-expanded="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="6" cy="18" r="2.25"/><circle cx="18" cy="6" r="2.25"/><path d="M8.25 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.75"/></svg><span>A path that keeps going</span></button><div class="feature-body"><div><p>When you near the end, a new chapter of lessons appears. Curiosity has no finish line.</p></div></div><span class="feature-progress" aria-hidden="true"><i></i></span></div></div></div><div class="module-visual" data-reveal><div class="panel mv mv-learn" id="mv-learn" aria-hidden="true"><div class="mv-stage">
+    <svg class="mv-trail" viewBox="0 0 496 496" aria-hidden="true">
+      <path class="mv-trail-done" d="M0 448 C 30 432, 40 414, 60 410 S 120 380, 150 384 S 210 380, 240 372"/>
+      <path class="mv-trail-next" d="M240 372 S 300 335, 330 330 S 390 330, 410 318"/>
+      <path class="mv-trail-new" data-feature-step="3" d="M410 318 S 455 275, 470 250 S 490 236, 500 234"/>
+      <g class="mv-stop is-done" transform="translate(60 410)"><circle r="8"/><path d="M-3.5 0.5 l2.5 2.5 l4.5 -5"/></g><g class="mv-stop is-done" transform="translate(150 384)"><circle r="8"/><path d="M-3.5 0.5 l2.5 2.5 l4.5 -5"/></g><g class="mv-stop is-current" transform="translate(240 372)"><circle r="11"/><circle class="mv-pulse" r="11"/></g><g class="mv-stop is-next" transform="translate(330 330)"><circle r="8"/></g><g class="mv-stop is-next" transform="translate(410 318)"><circle r="8"/></g><g class="mv-stop is-new" data-feature-step="3" transform="translate(470 250)"><circle r="8"/></g>
+    </svg>
+    <div class="mv-card mv-lesson" data-feature-step="0 1">
+      <div class="mv-swap" data-feature-step="0">
+        <div class="mv-card-top"><span class="mv-step">Lesson 01 · 5 min</span><span class="label-mono">Free</span></div>
+        <p class="mv-lesson-title">How does AI learn?</p>
+        <ol class="mv-sections"><li class="is-done"><span class="mv-num">01</span><span>AI, machine learning, and generative AI</span></li><li class="is-current"><span class="mv-num">02</span><span>What happens during training?</span></li><li class=""><span class="mv-num">03</span><span>A useful limit to remember</span></li></ol>
+      </div>
+      <div class="mv-swap" data-feature-step="1">
+        <div class="mv-card-top"><span class="mv-ico"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7Z"/><path d="M19 16.5c.25 1.5.75 2 2.25 2.25-1.5.25-2 .75-2.25 2.25-.25-1.5-.75-2-2.25-2.25 1.5-.25 2-.75 2.25-2.25Z"/></svg></span><span class="mv-muted">Written for Beginner</span></div>
+        <p class="mv-lesson-title">The art of a good prompt</p>
+        <ol class="mv-sections"><li class="is-current"><span class="mv-num">01</span><span>Start with your goal</span></li><li><span class="mv-num">02</span><span>Add context and format</span></li><li><span class="mv-num">03</span><span>Review, then revise</span></li></ol>
+      </div>
+    </div>
+    <div class="mv-card mv-pace" data-feature-step="2">
+      <div class="mv-card-top"><span class="mv-ico"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span><span class="mv-muted">Time each day</span></div>
+      <div class="mv-seg"><span class="">5 min</span><span class="is-on">10 min</span><span class="">20 min</span><span class="">30+ min</span></div>
+    </div>
+    <div class="mv-card mv-chapter" data-feature-step="3"><span class="mv-ico"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="6" cy="18" r="2.25"/><circle cx="18" cy="6" r="2.25"/><path d="M8.25 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.75"/></svg></span><span>New chapter · 6 lessons</span></div>
+  </div></div></div></div>
+</div></section>
+<section class="module module-practice" aria-labelledby="mv-practice-title"><div class="module-inner">
+  <header class="section-head" data-reveal><span class="tag">Practice</span><h2 class="t-heading-lg" id="mv-practice-title">Practice, with a hint when you need it.</h2><a class="btn btn-outline" href="/quiz"><span>Explore</span><svg class="chev" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3.5 10.5 8 6 12.5"/></svg></a><p class="section-sub">Every lesson ends with a quick quiz. Your guide is there when a question feels tricky.</p></header>
+  <div class="module-wide" data-reveal><div class="panel mv mv-practice" id="mv-practice" aria-hidden="true"><div class="mv-wide">
+    <div class="mv-card mv-quiz" data-feature-step="0 1">
+      <div class="mv-card-top"><span class="mv-step">Question 2 of 5</span><span class="mv-hint" data-feature-step="1"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v2M4.2 6.2l1.4 1.4M19.8 6.2l-1.4 1.4M3 13h2M19 13h2"/><path d="M8 13a4 4 0 1 1 8 0c0 1.5-.8 2.5-1.5 3.2-.4.4-.5.9-.5 1.3V18h-4v-.5c0-.4-.1-.9-.5-1.3C8.8 15.5 8 14.5 8 13Z"/><path d="M10 21h4"/></svg>Hint</span></div>
+      <p class="mv-q-title">Which three parts make up the simple prompt recipe?</p>
+      <ul class="mv-options"><li class="mv-option is-correct"><i class="mv-radio" aria-hidden="true"></i><span>The task, helpful context, and the format you want</span><span class="label-mono">Correct</span></li><li class="mv-option"><i class="mv-radio" aria-hidden="true"></i><span>Your name, password, and school</span></li><li class="mv-option"><i class="mv-radio" aria-hidden="true"></i><span>A greeting, a joke, and a thank-you</span></li><li class="mv-option"><i class="mv-radio" aria-hidden="true"></i><span>As many keywords as you can fit</span></li></ul>
+    </div>
+    <svg class="mv-link" viewBox="0 0 64 16" aria-hidden="true"><path d="M2 8 H60"/><path d="M54 3 L60 8 L54 13"/></svg>
+    <div class="mv-chat" data-feature-step="3">
+      <p class="mv-bubble is-learner">What goes in a good prompt?</p>
+      <div class="mv-bubble is-guide"><span class="mv-guide-name"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7Z"/><path d="M19 16.5c.25 1.5.75 2 2.25 2.25-1.5.25-2 .75-2.25 2.25-.25-1.5-.75-2-2.25-2.25 1.5-.25 2-.75 2.25-2.25Z"/></svg>Your guide</span><p>Try three parts: the task, a little context, and the format you want. Like “I’m in grade 9 biology. Ask me three short questions.”</p></div>
+      <p class="mv-bubble is-learner is-typing"><i></i><i></i><i></i></p>
+    </div>
+    <svg class="mv-link" viewBox="0 0 64 16" aria-hidden="true"><path d="M2 8 H60"/><path d="M54 3 L60 8 L54 13"/></svg>
+    <div class="mv-card mv-trophy" data-feature-step="2">
+      <span class="mv-trophy-ico"><svg class="icon icon-32" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.5 4h9v6a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 6H4.5v1.5A3 3 0 0 0 7.6 10.5M16.5 6h3v1.5a3 3 0 0 1-3.1 3M12 14.5V18M8.5 20.5h7"/></svg></span>
+      <p class="mv-trophy-num">+3</p>
+      <p class="mv-muted">trophies · quiz 80%+</p>
+      <span class="label-mono">Saved</span>
+    </div>
+  </div></div></div>
+  <div class="micro-row" data-reveal data-reveal-delay="0.1"><div class="features" data-features data-interval="4500" data-target="#mv-practice"><div class="feature is-open" data-feature="0"><button class="feature-title" type="button" aria-expanded="true"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><circle cx="4.75" cy="6.5" r=".75"/><circle cx="4.75" cy="12" r=".75"/><circle cx="4.75" cy="17.5" r=".75"/></svg><span>One question at a time</span></button><div class="feature-body"><div><p>Short quizzes that check what stuck, without the pressure.</p></div></div><span class="feature-progress" aria-hidden="true"><i></i></span></div><div class="feature" data-feature="1"><button class="feature-title" type="button" aria-expanded="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v2M4.2 6.2l1.4 1.4M19.8 6.2l-1.4 1.4M3 13h2M19 13h2"/><path d="M8 13a4 4 0 1 1 8 0c0 1.5-.8 2.5-1.5 3.2-.4.4-.5.9-.5 1.3V18h-4v-.5c0-.4-.1-.9-.5-1.3C8.8 15.5 8 14.5 8 13Z"/><path d="M10 21h4"/></svg><span>Hints before answers</span></button><div class="feature-body"><div><p>Get a nudge in the right direction, then try again.</p></div></div><span class="feature-progress" aria-hidden="true"><i></i></span></div><div class="feature" data-feature="2"><button class="feature-title" type="button" aria-expanded="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.5 4h9v6a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 6H4.5v1.5A3 3 0 0 0 7.6 10.5M16.5 6h3v1.5a3 3 0 0 1-3.1 3M12 14.5V18M8.5 20.5h7"/></svg><span>Trophies for little wins</span></button><div class="feature-body"><div><p>Finish a lesson for +1, score 80% or more for +3.</p></div></div><span class="feature-progress" aria-hidden="true"><i></i></span></div><div class="feature" data-feature="3"><button class="feature-title" type="button" aria-expanded="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5.5h16v11H9.5L5.5 20v-3.5H4z"/></svg><span>A guide nearby</span></button><div class="feature-body"><div><p>Ask in your own words. It explains things another way.</p></div></div><span class="feature-progress" aria-hidden="true"><i></i></span></div></div></div>
+</div></section>
+</div>
+<section class="how" id="how-it-works" aria-labelledby="how-title">
+  <div class="container">
+    <header class="how-head" data-reveal>
+      <h2 class="t-heading-lg" id="how-title">How it works</h2>
+      <p class="how-sub">Three small steps from curious to confident. No experience needed, just a little wonder.</p>
+    </header>
+    <div class="how-carousel" data-how data-interval="4500">
+      <div class="how-tabs" role="tablist" aria-label="Steps" data-reveal data-reveal-delay="0.05">
+        <button class="how-tab is-active" type="button" role="tab" id="how-tab-0" aria-controls="how-panel-0" aria-selected="true" tabindex="0" data-how-tab="0"><span class="how-tab-num">01</span><span>Tell us about you</span><span class="how-tab-line" aria-hidden="true"><i></i></span></button><button class="how-tab" type="button" role="tab" id="how-tab-1" aria-controls="how-panel-1" aria-selected="false" tabindex="-1" data-how-tab="1"><span class="how-tab-num">02</span><span>Get your path</span><span class="how-tab-line" aria-hidden="true"><i></i></span></button><button class="how-tab" type="button" role="tab" id="how-tab-2" aria-controls="how-panel-2" aria-selected="false" tabindex="-1" data-how-tab="2"><span class="how-tab-num">03</span><span>Grow one step at a time</span><span class="how-tab-line" aria-hidden="true"><i></i></span></button>
+      </div>
+      <div class="how-card" data-reveal data-reveal-delay="0.1">
+        <div class="how-copy">
+          <div class="how-step is-active" role="tabpanel" id="how-panel-0" aria-labelledby="how-tab-0" data-how-step="0">
+            <p class="how-text"><span class="how-word" style="--i:0">A</span> <span class="how-word" style="--i:1">few</span> <span class="how-word" style="--i:2">quick</span> <span class="how-word" style="--i:3">questions</span> <span class="how-word" style="--i:4">about</span> <span class="how-word" style="--i:5">what</span> <span class="how-word" style="--i:6">you</span> <span class="how-word" style="--i:7">know,</span> <span class="how-word" style="--i:8">what</span> <span class="how-word" style="--i:9">you</span> <span class="how-word" style="--i:10">love</span> <span class="how-word" style="--i:11">and</span> <span class="how-word" style="--i:12">where</span> <span class="how-word" style="--i:13">you</span> <span class="how-word" style="--i:14">want</span> <span class="how-word" style="--i:15">to</span> <span class="how-word" style="--i:16">go.</span></p>
+            <p class="how-meta"><span class="how-meta-label">Step 01</span><span class="how-meta-note">About 2 minutes</span></p>
+          </div><div class="how-step" role="tabpanel" id="how-panel-1" aria-labelledby="how-tab-1" data-how-step="1">
+            <p class="how-text"><span class="how-word" style="--i:0">Get</span> <span class="how-word" style="--i:1">a</span> <span class="how-word" style="--i:2">personal</span> <span class="how-word" style="--i:3">path</span> <span class="how-word" style="--i:4">that</span> <span class="how-word" style="--i:5">fits</span> <span class="how-word" style="--i:6">your</span> <span class="how-word" style="--i:7">experience,</span> <span class="how-word" style="--i:8">your</span> <span class="how-word" style="--i:9">goals</span> <span class="how-word" style="--i:10">and</span> <span class="how-word" style="--i:11">your</span> <span class="how-word" style="--i:12">everyday</span> <span class="how-word" style="--i:13">life.</span></p>
+            <p class="how-meta"><span class="how-meta-label">Step 02</span><span class="how-meta-note">Made for you</span></p>
+          </div><div class="how-step" role="tabpanel" id="how-panel-2" aria-labelledby="how-tab-2" data-how-step="2">
+            <p class="how-text"><span class="how-word" style="--i:0">Follow</span> <span class="how-word" style="--i:1">a</span> <span class="how-word" style="--i:2">winding</span> <span class="how-word" style="--i:3">path</span> <span class="how-word" style="--i:4">of</span> <span class="how-word" style="--i:5">short</span> <span class="how-word" style="--i:6">lessons.</span> <span class="how-word" style="--i:7">Practice</span> <span class="how-word" style="--i:8">as</span> <span class="how-word" style="--i:9">you</span> <span class="how-word" style="--i:10">go,</span> <span class="how-word" style="--i:11">with</span> <span class="how-word" style="--i:12">your</span> <span class="how-word" style="--i:13">guide</span> <span class="how-word" style="--i:14">nearby</span> <span class="how-word" style="--i:15">whenever</span> <span class="how-word" style="--i:16">you</span> <span class="how-word" style="--i:17">need</span> <span class="how-word" style="--i:18">a</span> <span class="how-word" style="--i:19">hand.</span></p>
+            <p class="how-meta"><span class="how-meta-label">Step 03</span><span class="how-meta-note">Your next little discovery</span></p>
+          </div>
+        </div>
+        <div class="how-visual" aria-hidden="true">
+          <div class="how-frame is-active" data-how-frame="0"><div class="how-q">
+      <p class="how-q-kicker">Question 1 of 5</p>
+      <p class="how-q-title">How well do you know AI?</p>
+      <ul class="how-options"><li class="how-option"><span class="how-option-key">01</span>A fresh start</li><li class="how-option is-picked"><span class="how-option-key">02</span>A little curious<span class="how-option-check"><svg class="icon icon-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></li><li class="how-option"><span class="how-option-key">03</span>Getting comfortable</li><li class="how-option"><span class="how-option-key">04</span>Ready to go deeper</li></ul>
+    </div></div><div class="how-frame" data-how-frame="1"><div class="how-path">
+      <div class="how-level"><span class="how-level-icon"><svg class="icon icon-20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg></span><span><span class="how-level-kicker">Your starting level</span><span class="how-level-name">Beginner</span></span><span class="label-mono">Ready</span></div>
+      <ol class="how-stops"><li class="how-stop is-next"><span class="how-stop-dot"></span><span class="how-stop-title">A closer look at generative AI</span><span class="how-stop-meta">Up next</span></li><li class="how-stop"><span class="how-stop-dot"></span><span class="how-stop-title">The art of a good prompt</span><span class="how-stop-meta">Stop 2</span></li><li class="how-stop"><span class="how-stop-dot"></span><span class="how-stop-title">Using AI thoughtfully</span><span class="how-stop-meta">Stop 3</span></li></ol>
+    </div></div><div class="how-frame" data-how-frame="2"><div class="how-grow">
+      <div class="how-ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" class="how-ring-track"/><circle cx="60" cy="60" r="52" class="how-ring-fill" pathLength="100"/></svg><span class="how-ring-copy"><span class="how-ring-num">2<span>/3</span></span><span class="how-ring-label">lessons done</span></span></div>
+      <ul class="how-wins">
+        <li><svg class="icon icon-20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="m8 12.25 2.75 2.75L16.25 9.5"/></svg><span>Lesson complete</span><b>+1</b></li>
+        <li><svg class="icon icon-20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.5 4h9v6a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 6H4.5v1.5A3 3 0 0 0 7.6 10.5M16.5 6h3v1.5a3 3 0 0 1-3.1 3M12 14.5V18M8.5 20.5h7"/></svg><span>Quiz 80%+</span><b>+3</b></li>
+        <li class="is-soft"><svg class="icon icon-20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5.5h16v11H9.5L5.5 20v-3.5H4z"/></svg><span>Ask your guide</span><b><svg class="icon icon-16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h15.5M14 6.5l5.5 5.5-5.5 5.5"/></svg></b></li>
+      </ul>
+    </div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="free" aria-labelledby="free-title">
+  <div class="container free-inner">
+    <ul class="free-seals" aria-label="What free means">
+      <li class="free-seal" data-reveal data-reveal-delay="0.00"><svg class="free-ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="57"/></svg><div class="seal"><span><strong>3</strong>free lessons</span></div></li><li class="free-seal" data-reveal data-reveal-delay="0.08"><svg class="free-ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="57"/></svg><div class="seal"><span><strong>0</strong>ads</span></div></li><li class="free-seal" data-reveal data-reveal-delay="0.16"><svg class="free-ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="57"/></svg><div class="seal"><span><strong>~2</strong>minutes to start</span></div></li>
+    </ul>
+    <div class="free-copy" data-reveal>
+      <h2 class="t-heading-lg" id="free-title">Free to start</h2>
+      <p class="free-text">Three essentials, quizzes and a peek at your path, no account needed. Create a free account to save your path and meet your guide.</p>
+      <div class="free-actions"><a class="btn btn-dark btn-md" href="/signup"><span>Start free</span></a><a class="btn btn-outline" href="/pricing"><span>See what’s free</span><svg class="chev" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3.5 10.5 8 6 12.5"/></svg></a></div>
+    </div>
+  </div>
+</section>
+<section class="samples" aria-labelledby="samples-title">
+  <div class="container">
+    <header class="samples-head" data-reveal>
+      <h2 class="t-heading-md" id="samples-title">Sample lessons</h2>
+      <a class="btn btn-outline" href="/lessons"><span>All lessons</span><svg class="chev" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3.5 10.5 8 6 12.5"/></svg></a>
+    </header>
+    <ul class="samples-grid">
+      <li data-reveal data-reveal-delay="0.00"><a class="sample" href="/lessons/how-does-ai-learn">
+        <span class="sample-media"><img class="" src="/assets/img/lesson-foundations.webp" width="1440" height="1080" alt="" loading="lazy" decoding="async" sizes="(max-width: 767px) 80vw, 360px"><span class="sample-tag">AI fundamentals</span></span>
+        <span class="sample-title">How does AI learn?</span>
+        <span class="sample-meta"><span class="meta">5 min · 5-question quiz</span><span class="label-mono">Free</span></span>
+      </a></li><li data-reveal data-reveal-delay="0.08"><a class="sample" href="/lessons/ask-better-questions">
+        <span class="sample-media"><img class="" src="/assets/img/lesson-tools.webp" width="1440" height="1080" alt="" loading="lazy" decoding="async" sizes="(max-width: 767px) 80vw, 360px"><span class="sample-tag">Practical AI tools</span></span>
+        <span class="sample-title">Ask better questions</span>
+        <span class="sample-meta"><span class="meta">6 min · 5-question quiz</span><span class="label-mono">Free</span></span>
+      </a></li><li data-reveal data-reveal-delay="0.16"><a class="sample" href="/lessons/use-ai-with-care">
+        <span class="sample-media"><img class="" src="/assets/img/lesson-ethics.webp" width="1440" height="1080" alt="" loading="lazy" decoding="async" sizes="(max-width: 767px) 80vw, 360px"><span class="sample-tag">Ethical AI use</span></span>
+        <span class="sample-title">Use AI with care</span>
+        <span class="sample-meta"><span class="meta">6 min · 5-question quiz</span><span class="label-mono">Free</span></span>
+      </a></li>
+    </ul>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="footer-art"><img class="" src="/assets/img/footer.webp" width="2400" height="1400" alt="" loading="lazy" decoding="async" sizes="100vw"></div>
+  <div class="footer-inner">
+    <div class="footer-cols"><div class="footer-col"><h3>Learn</h3><ul><li><a href="/lessons">Lessons</a></li><li><a href="/paths">Paths</a></li><li><a href="/quiz">Quiz</a></li></ul></div><div class="footer-col"><h3>Levels</h3><ul><li><a href="/paths#starter">Starter</a></li><li><a href="/paths#beginner">Beginner</a></li><li><a href="/paths#medium">Medium</a></li><li><a href="/paths#expert">Expert</a></li></ul></div><div class="footer-col"><h3>Free lessons</h3><ul><li><a href="/lessons/how-does-ai-learn">How does AI learn?</a></li><li><a href="/lessons/ask-better-questions">Ask better questions</a></li><li><a href="/lessons/use-ai-with-care">Use AI with care</a></li></ul></div><div class="footer-col"><h3>Account</h3><ul><li><a href="/signup">Start free</a></li><li><a href="/login">Log in</a></li><li><a href="/app">Open the app</a></li></ul></div><div class="footer-col"><h3>Company</h3><ul><li><a href="/about">About</a></li><li><a href="/pricing">Pricing</a></li><li><a href="/references">Sources &amp; credits</a></li></ul></div><div class="footer-col"><h3>Legal</h3><ul><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></div>
+    <div class="footer-bottom">
+      <div class="footer-legal"><span>© Fairylearn 2026</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/references">Sources &amp; credits</a></div>
+      <div class="footer-note"><span class="brand"><svg class="brand-mark" viewBox="0 0 26 26" aria-hidden="true" focusable="false"><path d="M13 2.5c.7 5.2 2.8 7.3 8 8-5.2.7-7.3 2.8-8 8-.7-5.2-2.8-7.3-8-8 5.2-.7 7.3-2.8 8-8Z"/><path d="M4.5 23.5c3-1.6 6-1.6 8.5 0s5.5 1.6 8.5 0"/></svg></span><span>A little curiosity goes a long way.</span></div>
+    </div>
+  </div>
+</footer>
+<div class="cookie" data-cookie hidden role="region" aria-label="Storage notice">
+  <div class="cookie-panel"><p>We store your progress in your browser, never for ads. No tracking. <a href="/privacy">Privacy</a></p><button class="btn btn-quiet" type="button" data-cookie-ok>Okay</button></div>
+</div>
+<script src="/assets/site.js" defer></script>
+
+</body>
 </html>

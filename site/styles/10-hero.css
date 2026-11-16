@@ -1,0 +1,39 @@
+/* 10-hero.css — landing hero. Positions match the live reference at 1440 / 768 / 390:
+   pill 459 / 449 / 375, headline 528 / 518 / 428, section 855 / 922 / 760 tall. */
+
+.hero { position: relative; height: 855px; padding: 0 80px; display: flex; flex-direction: column; justify-content: flex-end; isolation: isolate; overflow: hidden; }
+.hero-art { position: absolute; inset: 0 0 auto 0; height: 804px; z-index: -1; overflow: hidden; background: var(--color-bone); }
+.hero-art picture, .hero-art img { display: block; width: 100%; height: 100%; }
+.hero-img { color: transparent; object-fit: cover; object-position: 50% 50%; transform-origin: 50% 40%; animation: hero-settle 2.4s var(--ease-out) both; }
+/* The painting dissolves into the canvas so the headline sits on near-white. */
+.hero-art::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(247, 247, 245, 0) 0%, rgba(247, 247, 245, 0) 52%, rgba(247, 247, 245, 0.55) 70%, rgba(247, 247, 245, 0.9) 84%, var(--color-linen) 100%); }
+@keyframes hero-settle { from { transform: scale(1.04); } to { transform: scale(1); } }
+
+.hero-content { display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; max-width: 800px; margin-inline: auto; }
+.hero-title { width: 100%; margin-top: 40px; }
+.hero-sub { width: 100%; margin-top: 32px; font-size: 24px; line-height: 33.6px; letter-spacing: -0.72px; color: var(--color-stone); text-wrap: balance; }
+.hero-content .btn-hero { margin-top: 40px; }
+
+@media (max-width: 1023px) {
+  .hero { height: 922px; padding: 0 120px 40px; }
+  .hero-art { height: 866px; }
+  .hero-content { max-width: 528px; }
+  .hero-title { letter-spacing: -3.84px; }
+  .hero-sub { font-size: 20px; line-height: 28px; letter-spacing: -0.6px; }
+  .hero-content .btn-hero { font-size: 16px; line-height: 16px; letter-spacing: -0.01em; }
+}
+@media (max-width: 767px) {
+  .hero { height: 760px; padding: 0 24px 16px; }
+  .hero-art { height: 714px; }
+  .hero-content { max-width: 342px; }
+  .hero-title { margin-top: 24px; letter-spacing: -1.76px; line-height: 48.4px; }
+  .hero-sub { margin-top: 22px; font-size: 18px; line-height: 27px; letter-spacing: -0.36px; color: var(--color-charcoal); }
+  .hero-content .btn-hero { margin-top: 24px; }
+  .hero-art::after { background: linear-gradient(180deg, rgba(247, 247, 245, 0) 0%, rgba(247, 247, 245, 0) 46%, rgba(247, 247, 245, 0.6) 62%, rgba(247, 247, 245, 0.92) 78%, var(--color-linen) 100%); }
+}
+/* Short laptop screens: keep the action above the fold by fitting the hero to the window. */
+@media (min-width: 1024px) and (max-height: 860px) {
+  .hero { height: max(600px, calc(100svh - 24px)); }
+  .hero-art { height: calc(100% - 51px); }
+}
+@media (prefers-reduced-motion: reduce) { .hero-img { animation: none; } }

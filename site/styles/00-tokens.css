@@ -1,0 +1,139 @@
+/* 00-tokens.css — the design system. Every value here comes from the Duna style reference
+   (Refero tokens) or from computed styles measured on the live site. Pages and sections use
+   these variables only; they never introduce new colors, radii or shadows. */
+
+@font-face {
+  font-family: 'Inter Var';
+  src: url('/assets/fonts/inter-var.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter Var';
+  src: url('/assets/fonts/inter-var-ext.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Fragment Mono';
+  src: url('/assets/fonts/fragment-mono.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Colors — Refero names */
+  --color-aubergine-ink: #1b0624;   /* text, headings */
+  --color-espresso: #160f0c;        /* the only filled button color */
+  --color-onyx: #0d0d0d;
+  --color-smoke: #1a1816;
+  --color-charcoal: #292421;
+  --color-graphite: #444444;
+  --color-warm-ash: #766a7c;
+  --color-stone: #898683;
+  --color-bone: #edece7;            /* panels */
+  --color-mist: #eeeeee;            /* input fill */
+  --color-linen: #f7f7f5;           /* canvas */
+  --color-paper-white: #ffffff;     /* cards */
+
+  /* Measured on the live site */
+  --color-ink-60: rgba(27, 6, 36, 0.6);       /* secondary copy under titles */
+  --color-espresso-80: rgba(22, 15, 12, 0.8); /* filled button hover */
+  --color-hero-ink: #222221;                  /* hero h1 */
+  --color-tagline: #17100d;                   /* tag pill text */
+  --color-meta: #4d4846;                      /* "3 min read" meta */
+  --color-hairline: rgba(27, 6, 36, 0.1);
+  --color-hairline-strong: rgba(22, 15, 12, 0.14);
+  --color-glass-dark: rgba(27, 6, 36, 0.6);   /* announcement pill */
+  --color-glass-dark-hover: rgba(26, 6, 35, 0.4);
+  --color-glass-light: rgba(255, 255, 255, 0.1);
+  --color-menu: rgba(38, 33, 31, 0.72);       /* nav dropdown glass */
+  /* Functional state only (status dots, tiny mono labels). Never a fill, never a button. */
+  --color-signal: #9ee35d;
+  --color-signal-ink: #3f7a16;
+
+  /* Type */
+  --font-sans: 'Inter Var', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Fragment Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+
+  --text-micro: 12px;       --leading-micro: 1.3;      --tracking-micro: 0.02em;
+  --text-caption: 14px;     --leading-caption: 1.5;
+  --text-body-sm: 16px;     --leading-body-sm: 1.5;    --tracking-body-sm: -0.01em;
+  --text-body: 18px;        --leading-body: 1.2;       --tracking-body: -0.01em;
+  --text-body-lg: 20px;     --leading-body-lg: 1.4;    --tracking-body-lg: -0.02em;
+  --text-card-title: 22px;  --leading-card-title: 1.2; --tracking-card-title: -0.02em;
+  --text-subheading: 24px;  --leading-subheading: 1.4; --tracking-subheading: -0.02em;
+  --text-heading: 32px;     --leading-heading: 1.2;    --tracking-heading: -0.03em;
+  --text-heading-md: 40px;  --leading-heading-md: 1.2; --tracking-heading-md: -0.03em;
+  --text-heading-lg: 44px;  --leading-heading-lg: 1.1; --tracking-heading-lg: -0.05em;
+  --text-display: 72px;     --leading-display: 1;      --tracking-display: -0.06em;
+  --text-stat: 80px;        --leading-stat: 1;         --tracking-stat: -0.04em;
+
+  /* Spacing — 4px base */
+  --spacing-4: 4px;   --spacing-8: 8px;   --spacing-12: 12px; --spacing-16: 16px;
+  --spacing-20: 20px; --spacing-24: 24px; --spacing-32: 32px; --spacing-40: 40px;
+  --spacing-48: 48px; --spacing-60: 60px; --spacing-64: 64px; --spacing-80: 80px;
+  --spacing-120: 120px; --spacing-128: 128px; --spacing-140: 140px; --spacing-240: 240px;
+
+  /* Layout */
+  --page-max-width: 1200px;
+  --content-width: 1120px;        /* 1200 minus 40px side padding, as on the live site */
+  --gutter: 40px;
+  --section-gap: 120px;
+  --section-pad: 120px;
+  --card-padding: 32px;
+  --element-gap: 16px;
+  --nav-height: 76px;
+
+  /* Radii */
+  --radius-inputs: 8px;
+  --radius-xl: 12px;
+  --radius-cards: 16px;
+  --radius-images: 24px;
+  --radius-large-buttons: 60px;
+  --radius-buttons: 999px;
+  --radius-badges: 999px;
+
+  /* Elevation: the only shadow in the system */
+  --shadow-subtle: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px inset;
+
+  /* Motion — framer-like springs approximated with cubic-beziers */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 0.2s;
+  --dur: 0.4s;
+  --dur-slow: 0.8s;
+}
+
+@media (max-width: 1023px) {
+  :root {
+    --gutter: 24px;
+    --section-gap: 96px;
+    --section-pad: 96px;
+    --text-display: 64px;
+    --text-heading-lg: 40px; --tracking-heading-lg: -0.05em;
+    --text-heading-md: 36px;
+  }
+}
+@media (max-width: 767px) {
+  :root {
+    --gutter: 16px;
+    --section-gap: 80px;
+    --section-pad: 80px;
+    --card-padding: 24px;
+    --text-display: 44px; --leading-display: 1.1; --tracking-display: -0.04em;
+    --text-heading-lg: 36px; --tracking-heading-lg: -0.05em;
+    --text-heading-md: 32px;
+    --text-heading: 28px;
+    --text-stat: 56px;
+    --text-card-title: 18px;
+    --text-subheading: 20px;
+  }
+}

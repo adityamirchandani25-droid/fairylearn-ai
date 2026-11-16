@@ -34,6 +34,16 @@ The floating **AI guide** works on the path and inside lessons. `/api/guide` che
 
 The Node server binds to loopback for local development. For a public host, set `HOST=0.0.0.0` and use the host-assigned `PORT`. Deployment needs the Node server as well as `public/`, since the server provides configuration and secure personalization. Submit the public site's home URL, not a GitHub repository URL; judges must be able to open the home page and lessons without logging in.
 
+## Images
+
+The site's watercolor images (hero, sky band, footer art, lesson cards) are painted by Gemini's image model from `scripts/generate-images.mjs`. Every prompt starts with one locked style prompt, so the set stays consistent. Filenames and sizes match the `images` registry in `site/lib/site.mjs`, which also holds each image's alt text.
+
+1. Put your key in `.env.local` as `GEMINI_API_KEY=...`. `.env*` is gitignored (only `.env.example` is committed), and the script reads the key only from `process.env`. It never prints the key.
+2. Run `npm run images` for every image, `npm run images -- --only=hero,sky` for some of them, or `npm run images -- --dry-run` to print the prompts without calling the API.
+3. Run `npm run build:site` so the local server lists the new files.
+
+Images are saved as webp in `public/assets/img/`. Saving needs either the `sharp` package (`npm install --no-save sharp`) or ImageMagick (`magick` or `convert`) on your PATH. Set `GEMINI_IMAGE_MODEL` to try a different model (default `gemini-2.5-flash-image`).
+
 ## Deploy to Vercel
 
 Import the repository with the project root set to this directory. The checked-in

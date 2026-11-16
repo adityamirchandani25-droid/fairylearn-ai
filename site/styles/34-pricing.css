@@ -1,0 +1,70 @@
+/* 34-pricing.css — /pricing. Every selector is scoped to .page-pricing. */
+
+.page-pricing .pr-plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--element-gap); max-width: 1040px; }
+.page-pricing .pr-plan { background: var(--color-paper-white); border-radius: var(--radius-cards); box-shadow: var(--shadow-subtle); padding: 40px; display: flex; flex-direction: column; }
+.page-pricing .pr-plan.is-featured { background: var(--color-bone); box-shadow: none; }
+.page-pricing .pr-plan-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.page-pricing .pr-plan-head h2 { color: var(--color-aubergine-ink); }
+.page-pricing .pr-price { display: flex; align-items: baseline; gap: 12px; margin-top: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--color-hairline); }
+.page-pricing .pr-amount { font-size: var(--text-stat); line-height: var(--leading-stat); letter-spacing: var(--tracking-stat); font-weight: var(--font-weight-medium); color: #000; }
+.page-pricing .pr-per { font-size: 16px; line-height: 24px; letter-spacing: -0.01em; color: var(--color-stone); }
+.page-pricing .pr-list { display: grid; gap: 14px; margin-top: 32px; }
+.page-pricing .pr-list li { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 24px; letter-spacing: -0.01em; color: var(--color-charcoal); }
+.page-pricing .pr-list .icon { margin-top: 2px; color: var(--color-smoke); }
+.page-pricing .pr-action { margin-top: auto; padding-top: 40px; }
+.page-pricing .pr-note { margin-top: 24px; text-align: center; font-size: 16px; line-height: 24px; letter-spacing: -0.01em; color: var(--color-stone); }
+
+/* Comparison table: hairline rows, check icons, no fills. */
+.page-pricing .pr-compare { padding-top: var(--section-gap); }
+.page-pricing .pr-table-scroll { margin-top: 48px; overflow-x: auto; }
+.page-pricing .pr-table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 24px; letter-spacing: -0.01em; }
+.page-pricing .pr-table th, .page-pricing .pr-table td { padding: 18px 0; border-bottom: 1px solid var(--color-hairline); text-align: left; font-weight: 400; }
+.page-pricing .pr-table thead th { padding-top: 0; font-size: 14px; line-height: 21px; color: var(--color-stone); }
+.page-pricing .pr-table tbody th { color: var(--color-aubergine-ink); padding-right: 24px; }
+.page-pricing .pr-table td, .page-pricing .pr-table thead th:not(:first-child) { width: 200px; text-align: center; }
+.page-pricing .pr-check { display: inline-flex; color: var(--color-smoke); }
+.page-pricing .pr-dash { color: var(--color-stone); }
+
+/* FAQ: details/summary styled like the module accordion — Bone cover when open. */
+.page-pricing .pr-faq { padding-block: var(--section-gap); }
+.page-pricing .pr-faq-grid { display: grid; grid-template-columns: minmax(0, 432px) minmax(0, 560px); justify-content: space-between; gap: 48px; }
+.page-pricing .pr-faq-sub { margin-top: 16px; font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-stone); }
+.page-pricing .pr-faq-list { display: grid; gap: 4px; align-content: start; }
+.page-pricing .pr-faq-item { border-radius: var(--radius-cards); padding: 16px; transition: background-color var(--dur) var(--ease-out); }
+.page-pricing .pr-faq-item[open] { background: var(--color-bone); }
+.page-pricing .pr-faq-item summary { display: flex; align-items: center; gap: 14px; cursor: pointer; list-style: none; font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-smoke); }
+.page-pricing .pr-faq-item summary::-webkit-details-marker { display: none; }
+.page-pricing .pr-faq-item summary span { flex: 1; }
+.page-pricing .pr-faq-toggle { color: var(--color-stone); transition: transform var(--dur) var(--ease-out); }
+.page-pricing .pr-faq-item[open] .pr-faq-toggle { transform: rotate(45deg); }
+.page-pricing .pr-faq-item:not([open]) summary:hover { color: rgba(26, 24, 22, 0.7); }
+.page-pricing .pr-faq-body p { padding: 8px 0 0 38px; font-size: 16px; line-height: 24px; letter-spacing: -0.01em; color: var(--color-charcoal); max-width: 480px; }
+.page-pricing .pr-faq-item[open] .pr-faq-body { animation: pr-faq-in var(--dur) var(--ease-out); }
+@keyframes pr-faq-in { from { opacity: 0; transform: translateY(-4px); } }
+/* Where the browser can animate to height:auto, the answer also slides open and closed. */
+@supports (interpolate-size: allow-keywords) {
+  .page-pricing .pr-faq-list { interpolate-size: allow-keywords; }
+  .page-pricing .pr-faq-item::details-content { height: 0; overflow: clip; transition: height var(--dur) var(--ease-out), content-visibility var(--dur) allow-discrete; }
+  .page-pricing .pr-faq-item[open]::details-content { height: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-pricing .pr-faq-item::details-content { transition: none; }
+}
+
+/* Closing CTA band */
+
+@media (max-width: 1023px) {
+  .page-pricing .pr-plan { padding: 32px; }
+  .page-pricing .pr-faq-grid { grid-template-columns: 1fr; gap: 32px; }
+  .page-pricing .pr-table td, .page-pricing .pr-table thead th:not(:first-child) { width: 140px; }
+}
+@media (max-width: 767px) {
+  .page-pricing .pr-plans { grid-template-columns: 1fr; }
+  .page-pricing .pr-plan { padding: 24px; }
+  .page-pricing .pr-price { margin-top: 24px; padding-bottom: 24px; }
+  .page-pricing .pr-table th, .page-pricing .pr-table td { padding: 14px 0; font-size: 15px; }
+  .page-pricing .pr-table td, .page-pricing .pr-table thead th:not(:first-child) { width: 76px; }
+  .page-pricing .pr-table thead th { font-size: 12px; line-height: 16px; }
+  .page-pricing .pr-faq-item summary { font-size: 18px; line-height: 25px; }
+  .page-pricing .pr-faq-body p { padding-left: 0; }
+}

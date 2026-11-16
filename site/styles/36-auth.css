@@ -1,0 +1,71 @@
+/* 36-auth.css — /login and /signup: a watercolor panel beside a calm, centered form.
+   The panel starts below the fixed nav so the nav never sits on top of the art. */
+
+.page-auth .auth { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: 100vh; min-height: 100svh; }
+
+.page-auth .auth-art { position: sticky; top: var(--nav-height); margin: var(--nav-height) 0 16px 16px; height: calc(100vh - var(--nav-height) - 16px); height: calc(100svh - var(--nav-height) - 16px); border-radius: var(--radius-images); overflow: hidden; background: var(--color-bone); isolation: isolate; }
+.page-auth .auth-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0%; transform: scale(1.12); transform-origin: 50% 0%; z-index: -2; animation: page-auth-settle 2.4s var(--ease-out) both; }
+.page-auth .auth-art::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, rgba(36, 22, 48, 0.55) 0%, rgba(36, 22, 48, 0.28) 30%, rgba(36, 22, 48, 0) 55%); }
+.page-auth .auth-art-copy { position: absolute; left: 40px; right: 40px; bottom: 40px; display: grid; gap: 20px; justify-items: start; color: #fff; }
+.page-auth .auth-art-copy p { font-size: var(--text-heading); line-height: var(--leading-heading); letter-spacing: var(--tracking-heading); text-wrap: balance; }
+@keyframes page-auth-settle { from { transform: scale(1.18); } to { transform: scale(1.12); } }
+
+.page-auth .auth-main { display: flex; align-items: center; justify-content: center; padding: calc(var(--nav-height) + 32px) var(--gutter) 64px; }
+.page-auth .auth-column { width: 100%; max-width: 400px; display: grid; gap: 24px; }
+.page-auth .auth-intro { display: grid; gap: 16px; }
+.page-auth .auth-lead { font-size: var(--text-body); line-height: 1.45; letter-spacing: var(--tracking-body); color: var(--color-stone); text-wrap: pretty; }
+.page-auth .auth-lead strong { font-weight: var(--font-weight-medium); color: var(--color-aubergine-ink); overflow-wrap: anywhere; }
+.page-auth .auth-notice { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: var(--radius-cards); background: var(--color-bone); color: var(--color-charcoal); font-size: 14px; line-height: 21px; }
+.page-auth .auth-notice[hidden] { display: none; }
+.page-auth .auth-notice .icon { margin-top: 0.5px; color: var(--color-warm-ash); }
+
+.page-auth .auth-fields { display: grid; gap: 16px; min-width: 0; margin: 0; padding: 0; border: 0; }
+/* The error line keeps its height, so a message never pushes the button down. */
+.page-auth .auth-form .field-error { min-height: 21px; margin: -6px 0 -4px; font-weight: var(--font-weight-medium); }
+.page-auth .auth-form .input[aria-invalid="true"] { border-color: var(--color-aubergine-ink); background: var(--color-paper-white); }
+.page-auth .auth-form.is-unavailable .field { opacity: 0.55; }
+.page-auth .auth-fields:disabled .btn { opacity: 0.45; }
+.page-auth .auth-form .input:disabled { cursor: not-allowed; }
+.page-auth .auth-form[aria-busy="true"] .btn { opacity: 0.8; }
+/* Browser autofill: keep the input's own fill and text color instead of the browser's tint. */
+.page-auth .input:-webkit-autofill, .page-auth .input:-webkit-autofill:hover, .page-auth .input:-webkit-autofill:focus { -webkit-text-fill-color: var(--color-aubergine-ink); caret-color: var(--color-aubergine-ink); -webkit-box-shadow: 0 0 0 48px var(--color-mist) inset; transition: background-color 9999s linear 0s; }
+
+.page-auth .auth-pass { position: relative; }
+.page-auth .auth-pass .input { padding-right: 76px; }
+.page-auth .auth-reveal { position: absolute; top: 8px; right: 8px; height: 32px; min-width: 56px; padding: 0 12px; border-radius: var(--radius-buttons); font-size: 14px; line-height: 21px; color: var(--color-graphite); transition: background-color var(--dur-fast) linear, color var(--dur-fast) linear; }
+.page-auth .auth-reveal:hover { background: rgba(22, 15, 12, 0.06); color: var(--color-aubergine-ink); }
+.page-auth .auth-reveal:disabled { pointer-events: none; }
+.page-auth .auth-pass .input::-ms-reveal { display: none; }
+
+.page-auth .auth-state { display: grid; gap: 16px; justify-items: start; outline: none; }
+.page-auth .auth-state[hidden] { display: none; }
+.page-auth .auth-state .btn { justify-self: stretch; margin-top: 8px; }
+.page-auth .auth-state-icon { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--color-paper-white); box-shadow: var(--shadow-subtle); color: var(--color-charcoal); }
+.page-auth .auth-hint { font-size: 14px; line-height: 21px; color: var(--color-stone); }
+
+.page-auth .auth-more { display: grid; gap: 20px; }
+.page-auth .auth-more[hidden] { display: none; }
+.page-auth .auth-switch { font-size: 16px; line-height: 24px; color: var(--color-ink-60); text-align: center; }
+.page-auth .auth-switch a { color: var(--color-aubergine-ink); text-decoration-color: var(--color-hairline-strong); }
+.page-auth .auth-or { display: flex; align-items: center; gap: 12px; color: var(--color-stone); font-size: 14px; line-height: 21px; }
+.page-auth .auth-or::before, .page-auth .auth-or::after { content: ''; flex: 1; height: 1px; background: var(--color-hairline); }
+.page-auth .auth-more .btn-outline { justify-content: center; font-size: 16px; }
+.page-auth .auth-privacy { font-size: 12px; line-height: 18px; letter-spacing: var(--tracking-micro); color: var(--color-stone); text-align: center; text-wrap: balance; }
+.page-auth .auth-privacy a { color: var(--color-graphite); }
+
+@media (max-width: 1023px) {
+  .page-auth .auth { grid-template-columns: 1fr; min-height: 0; }
+  .page-auth .auth-art { position: relative; top: 0; margin: var(--nav-height) 12px 0; height: 320px; }
+  .page-auth .auth-art img { transform: none; animation: none; object-position: 50% 42%; }
+  .page-auth .auth-art-copy { left: 24px; right: 24px; bottom: 24px; gap: 14px; }
+  .page-auth .auth-art-copy p { font-size: 28px; }
+  .page-auth .auth-main { padding: 56px var(--gutter) 96px; }
+}
+@media (max-width: 767px) {
+  .page-auth .auth-art { margin: var(--nav-height) 8px 0; height: 200px; border-radius: var(--radius-cards); }
+  .page-auth .auth-art-copy { left: 20px; right: 20px; bottom: 18px; gap: 10px; }
+  .page-auth .auth-art-copy p { font-size: 22px; }
+  .page-auth .auth-main { padding: 40px var(--gutter) 80px; }
+  .page-auth .auth-intro .t-heading-lg { font-size: 36px; }
+}
+@media (prefers-reduced-motion: reduce) { .page-auth .auth-art img { animation: none; } }

@@ -1,0 +1,97 @@
+/* 30-lessons.css — /lessons. Scoped to .page-lessons (the closing CTA band is shared with
+   the lesson detail page, .page-lesson). */
+
+/* Free essentials: the first lesson as a wide feature, the other two side by side below. */
+.page-lessons .lessons-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 64px 32px; padding-bottom: var(--section-gap); }
+.page-lessons .lessons-card { min-width: 0; }
+.page-lessons .lessons-card.is-featured { grid-column: 1 / -1; }
+.page-lessons .lessons-card-link { display: grid; grid-template-columns: 1fr; gap: 24px; align-content: start; height: 100%; }
+.page-lessons .is-featured .lessons-card-link { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 64px; align-items: center; }
+.page-lessons .lessons-card-media { position: relative; border-radius: var(--radius-images); overflow: hidden; background: var(--color-bone); aspect-ratio: 3 / 2; }
+.page-lessons .is-featured .lessons-card-media { aspect-ratio: 4 / 3; }
+.page-lessons .lessons-card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease-out); }
+.page-lessons .lessons-card-link:hover .lessons-card-media img { transform: scale(1.03); }
+.page-lessons .lessons-card-cat { position: absolute; left: 12px; bottom: 12px; height: 28px; padding: 2px 10px; display: inline-flex; align-items: center; border-radius: var(--radius-badges); background: rgba(255, 255, 255, 0.72); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: var(--color-tagline); font-size: 13px; line-height: 20px; }
+.page-lessons .lessons-card-body { display: grid; gap: 10px; align-content: start; padding: 4px 4px 0; }
+.page-lessons .lessons-card-num { font-family: var(--font-mono); font-size: 12px; line-height: 16px; letter-spacing: 0.02em; text-transform: uppercase; color: var(--color-stone); }
+.page-lessons .lessons-card-title { font-size: 24px; line-height: 1.2; letter-spacing: -0.03em; color: var(--color-charcoal); text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; text-decoration-thickness: 1px; transition: text-decoration-color var(--dur-fast) linear; }
+.page-lessons .is-featured .lessons-card-title { font-size: 40px; line-height: 1.1; letter-spacing: -0.04em; }
+.page-lessons .lessons-card-link:hover .lessons-card-title { text-decoration-color: currentColor; }
+.page-lessons .lessons-card-summary { font-size: 16px; line-height: 24px; letter-spacing: -0.01em; color: var(--color-ink-60); max-width: 520px; }
+.page-lessons .is-featured .lessons-card-summary { font-size: 20px; line-height: 28px; letter-spacing: -0.02em; }
+.page-lessons .lessons-card-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; margin-top: 2px; }
+.page-lessons .lessons-card-meta .meta { white-space: nowrap; }
+.page-lessons .lessons-card-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 16px; line-height: 24px; letter-spacing: -0.01em; font-weight: var(--font-weight-medium); color: var(--color-aubergine-ink); }
+.page-lessons .lessons-card-cta .icon { transition: transform var(--dur-fast) var(--ease-out); }
+.page-lessons .lessons-card-link:hover .lessons-card-cta .icon { transform: translateX(3px); }
+
+/* AI guide */
+.page-lessons .lessons-guide { display: grid; grid-template-columns: 1fr 496px; gap: 128px; align-items: center; padding-block: var(--section-pad); background: linear-gradient(var(--color-hairline), var(--color-hairline)) center top / calc(100% - 2 * var(--gutter)) 1px no-repeat; }
+.page-lessons .lessons-guide-copy .tag { margin-bottom: 20px; }
+.page-lessons .lessons-sub, .page-lesson .lessons-sub { margin-top: 16px; max-width: 560px; font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-stone); }
+.page-lessons .lessons-guide-facts { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px 32px; }
+.page-lessons .lessons-guide-facts li { display: grid; grid-template-columns: 24px 1fr; gap: 14px; align-items: start; }
+.page-lessons .lessons-guide-facts .icon { color: var(--color-smoke); margin-top: 2px; }
+.page-lessons .lessons-guide-facts h3 { font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-smoke); }
+.page-lessons .lessons-guide-facts p { margin-top: 4px; font-size: 16px; line-height: 24px; letter-spacing: -0.01em; color: var(--color-ink-60); }
+.page-lessons .lessons-guide-note { margin-top: 32px; font-size: 14px; line-height: 21px; color: var(--color-stone); }
+.page-lessons .lessons-guide-panel { aspect-ratio: 1; display: grid; place-items: center; padding: 40px; }
+.page-lessons .lessons-chat { width: 100%; max-width: 380px; background: var(--color-paper-white); border-radius: var(--radius-cards); box-shadow: var(--shadow-subtle); padding: 16px; display: grid; gap: 10px; }
+.page-lessons .lessons-chat-head { display: flex; align-items: center; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--color-hairline); font-size: 14px; line-height: 20px; color: var(--color-charcoal); }
+.page-lessons .lessons-chat-head .label-mono { margin-left: auto; }
+.page-lessons .lessons-chat-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--color-bone); display: grid; place-items: center; color: var(--color-smoke); }
+.page-lessons .lessons-bubble { max-width: 86%; padding: 10px 12px; border-radius: 14px; font-size: 14px; line-height: 20px; letter-spacing: -0.005em; }
+.page-lessons .lessons-bubble.is-learner { justify-self: end; background: var(--color-bone); color: var(--color-charcoal); border-bottom-right-radius: 4px; }
+.page-lessons .lessons-bubble.is-guide { justify-self: start; background: var(--color-linen); color: var(--color-aubergine-ink); box-shadow: var(--shadow-subtle); border-bottom-left-radius: 4px; }
+.page-lessons .lessons-typing { display: inline-flex; gap: 4px; padding: 10px 12px; background: var(--color-linen); border-radius: 14px; justify-self: start; box-shadow: var(--shadow-subtle); }
+.page-lessons .lessons-typing i { width: 5px; height: 5px; border-radius: 50%; background: var(--color-stone); animation: lessons-dot 1.2s ease-in-out infinite; }
+.page-lessons .lessons-typing i:nth-child(2) { animation-delay: 0.15s; }
+.page-lessons .lessons-typing i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes lessons-dot { 0%, 60%, 100% { opacity: 0.3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-2px); } }
+
+/* What comes next: four levels split by hairlines */
+.page-lessons .lessons-next { padding-block: var(--section-pad) var(--section-gap); background: linear-gradient(var(--color-hairline), var(--color-hairline)) center top / calc(100% - 2 * var(--gutter)) 1px no-repeat; }
+.page-lessons .lessons-levels { margin-top: 64px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--color-hairline); }
+.page-lessons .lessons-level { padding: 40px 20px 8px; display: flex; flex-direction: column; gap: 12px; }
+.page-lessons .lessons-level:first-child { padding-left: 0; }
+.page-lessons .lessons-level + .lessons-level { border-left: 1px solid var(--color-hairline); }
+.page-lessons .lessons-level-name { font-size: 24px; line-height: 1.3; letter-spacing: -0.03em; color: var(--color-aubergine-ink); }
+.page-lessons .lessons-level-blurb { font-size: 16px; line-height: 24px; color: var(--color-ink-60); }
+.page-lessons .lessons-level ol { margin-top: 12px; display: grid; gap: 10px; }
+.page-lessons .lessons-level li { display: grid; grid-template-columns: 28px 1fr; font-size: 16px; line-height: 22px; letter-spacing: -0.01em; color: var(--color-charcoal); }
+.page-lessons .lessons-level-n { font-family: var(--font-mono); font-size: 12px; line-height: 22px; color: var(--color-stone); }
+.page-lessons .lessons-level-more { margin-top: auto; padding-top: 8px; font-size: 14px; line-height: 21px; color: var(--color-stone); justify-self: start; }
+.page-lessons .lessons-level-more:hover { color: var(--color-aubergine-ink); }
+
+/* Small laptops: the fixed 496px panel and 128px gap squeezed the facts into ~110px columns. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .page-lessons .lessons-guide { grid-template-columns: minmax(0, 1fr) 440px; gap: 56px; }
+  .page-lessons .lessons-guide-panel { aspect-ratio: auto; padding: 40px 28px; }
+}
+@media (max-width: 1023px) {
+  .page-lessons .lessons-grid { gap: 48px 24px; }
+  .page-lessons .is-featured .lessons-card-link { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px; }
+  .page-lessons .is-featured .lessons-card-title { font-size: 32px; }
+  .page-lessons .is-featured .lessons-card-summary { font-size: 18px; line-height: 26px; }
+  .page-lessons .lessons-guide-panel { aspect-ratio: auto; padding: 40px 24px; }
+  .page-lessons .lessons-guide { grid-template-columns: 1fr 1fr; gap: 48px; }
+  .page-lessons .lessons-guide-facts { grid-template-columns: 1fr; gap: 24px; }
+  .page-lessons .lessons-levels { grid-template-columns: 1fr 1fr; }
+  .page-lessons .lessons-level:nth-child(3) { padding-left: 0; border-left: 0; }
+  .page-lessons .lessons-level:nth-child(n + 3) { border-top: 1px solid var(--color-hairline); }
+}
+@media (max-width: 767px) {
+  .page-lessons .lessons-grid { grid-template-columns: 1fr; gap: 48px; }
+  .page-lessons .is-featured .lessons-card-link { grid-template-columns: 1fr; gap: 24px; }
+  .page-lessons .lessons-card-media, .page-lessons .is-featured .lessons-card-media { aspect-ratio: 4 / 3; }
+  .page-lessons .is-featured .lessons-card-title { font-size: 28px; }
+  .page-lessons .lessons-guide { grid-template-columns: 1fr; gap: 40px; }
+  .page-lessons .lessons-guide-panel { padding: 24px 16px; }
+  .page-lessons .lessons-levels { grid-template-columns: 1fr; }
+  .page-lessons .lessons-level, .page-lessons .lessons-level + .lessons-level { padding: 32px 0 8px; border-left: 0; }
+  .page-lessons .lessons-level + .lessons-level { border-top: 1px solid var(--color-hairline); }
+  .page-lessons .lessons-sub, .page-lesson .lessons-sub { font-size: 18px; line-height: 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-lessons .lessons-typing i { animation: none; }
+}

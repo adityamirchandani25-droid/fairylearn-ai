@@ -1,0 +1,68 @@
+/* 35-about.css — /about. Every selector is scoped to .page-about. */
+
+/* Why we built it: wide watercolor, then heading left and copy right. */
+.page-about .ab-image { aspect-ratio: 16 / 7; }
+.page-about .ab-image img { object-position: center 62%; }
+/* The art's pale foot meets the linen canvas, so a hairline inset keeps the frame's edge. */
+.page-about .ab-image { position: relative; }
+.page-about .ab-image::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: var(--shadow-subtle); pointer-events: none; }
+.page-about .ab-why-grid { display: grid; grid-template-columns: minmax(0, 432px) minmax(0, 560px); justify-content: space-between; gap: 48px; margin-top: 80px; }
+.page-about .ab-why-copy { display: grid; gap: 20px; }
+.page-about .ab-why-copy p { font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-charcoal); }
+.page-about .ab-why-copy p + p { color: var(--color-stone); }
+
+/* What we believe: three icon columns split by hairlines (as on the landing stats). */
+.page-about .ab-believe { padding-top: var(--section-gap); }
+.page-about .ab-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 48px; border-top: 1px solid var(--color-hairline); }
+.page-about .ab-col { padding: 40px 20px 40px 20px; min-height: 243px; }
+.page-about .ab-col:first-child { padding-left: 0; }
+.page-about .ab-col + .ab-col { border-left: 1px solid var(--color-hairline); }
+.page-about .ab-col .icon { color: var(--color-aubergine-ink); }
+.page-about .ab-col h3 { margin-top: 40px; font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-aubergine-ink); }
+.page-about .ab-col p { margin-top: 4px; max-width: 300px; font-size: 16px; line-height: 24px; letter-spacing: -0.01em; color: var(--color-ink-60); }
+
+/* How it's made: heading column and a Bone panel list. */
+.page-about .ab-made { padding-top: var(--section-gap); }
+.page-about .ab-made-grid { display: grid; grid-template-columns: minmax(0, 432px) minmax(0, 560px); justify-content: space-between; gap: 48px; align-items: start; }
+.page-about .ab-made-head p { margin-top: 16px; font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-stone); }
+.page-about .ab-made-head .btn-outline { margin-top: 32px; }
+.page-about .ab-made-list { background: var(--color-bone); border-radius: var(--radius-images); padding: 8px 32px; }
+.page-about .ab-made-list li { display: flex; gap: 16px; padding: 24px 0; }
+.page-about .ab-made-list li + li { border-top: 1px solid var(--color-hairline); }
+.page-about .ab-made-list .icon { margin-top: 2px; color: var(--color-smoke); }
+.page-about .ab-made-list h3 { font-size: 20px; line-height: 28px; letter-spacing: -0.02em; color: var(--color-smoke); }
+.page-about .ab-made-list p { margin-top: 4px; font-size: 16px; line-height: 24px; letter-spacing: -0.01em; color: var(--color-charcoal); }
+
+/* Quiet stats row — true numbers only, counted up on reveal. */
+.page-about .ab-stats { padding-block: var(--section-gap); }
+.page-about .ab-stats-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--color-hairline); border-bottom: 1px solid var(--color-hairline); }
+.page-about .ab-stats-row li { display: grid; gap: 16px; padding: 40px 20px; }
+.page-about .ab-stats-row li:first-child { padding-left: 0; }
+.page-about .ab-stats-row li + li { border-left: 1px solid var(--color-hairline); }
+.page-about .ab-stat { font-size: var(--text-stat); line-height: var(--leading-stat); letter-spacing: var(--tracking-stat); font-weight: var(--font-weight-medium); color: #000; }
+.page-about .ab-stat-label { font-size: 18px; line-height: 21.6px; letter-spacing: -0.01em; color: var(--color-aubergine-ink); }
+
+/* Closing CTA band */
+
+@media (max-width: 1023px) {
+  .page-about .ab-why-grid, .page-about .ab-made-grid { grid-template-columns: 1fr; gap: 24px; }
+  .page-about .ab-why-grid { margin-top: 56px; }
+  .page-about .ab-made-grid { gap: 40px; }
+  .page-about .ab-stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .page-about .ab-stats-row li:nth-child(3) { padding-left: 0; border-left: 0; }
+  .page-about .ab-stats-row li:nth-child(n + 3) { border-top: 1px solid var(--color-hairline); }
+}
+@media (max-width: 767px) {
+  .page-about .ab-image { aspect-ratio: 4 / 3; }
+  .page-about .ab-image img { object-position: 30% center; }
+  .page-about .ab-why-copy p { font-size: 18px; line-height: 26px; }
+  .page-about .ab-cols { grid-template-columns: 1fr; }
+  .page-about .ab-col { padding: 32px 0; min-height: 0; }
+  .page-about .ab-col + .ab-col { border-left: 0; border-top: 1px solid var(--color-hairline); }
+  .page-about .ab-col h3 { margin-top: 24px; }
+  .page-about .ab-made-list { padding: 4px 20px; }
+  .page-about .ab-made-list li { padding: 20px 0; }
+  .page-about .ab-stats-row li { padding: 28px 12px; gap: 10px; }
+  .page-about .ab-stats-row li:nth-child(odd) { padding-left: 0; }
+  .page-about .ab-stat-label { font-size: 16px; line-height: 20px; }
+}

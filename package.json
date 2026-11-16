@@ -3,6 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": { "dev": "node --watch --env-file-if-exists=.env --env-file-if-exists=.env.local server.mjs", "start": "node --env-file-if-exists=.env --env-file-if-exists=.env.local server.mjs", "test": "node --test" },
-  "engines": { "node": ">=22" }
+  "scripts": {
+    "dev": "node --watch --env-file-if-exists=.env --env-file-if-exists=.env.local server.mjs",
+    "start": "node --env-file-if-exists=.env --env-file-if-exists=.env.local server.mjs",
+    "test": "node --test",
+    "build:site": "node site/build.mjs",
+    "images": "node --env-file-if-exists=.env.local scripts/generate-images.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
 }
